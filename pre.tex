@@ -1,0 +1,28 @@
+\section{Preliminaries}
+
+\subsection{Non-deterministic Finite Automaton}
+\noindent
+A Non-deterministic Finite Automaton A is a tuple $(S,\Sigma,\delta,S_0,F)$, where \\
+$\bullet $ S is a finite nonempty set of states,\\
+$\bullet $ $\Sigma$ is a finite nonempty alphabet,\\
+$\bullet $ $ S \times \Sigma \to S \in \delta$ is a transition function, \\
+$\bullet $ $S_0 \in S$ is a nonempty set of initial state, and \\
+$\bullet $ F $\subseteq $ S is the set of final states.\\
+Intuitively, $\delta(s, a)$ is the set of states that A can move into when it is in state s and it reads the symbol a.  \\
+A run r of A on a finite word $w = a_0, ..., a_{n-1} \in \Sigma^{*}$ is a sequence $s_0, ..., s_n $of n+1 states in S such that $s_0 \in S_0$, and $s_{i+1} \in \delta(s_i, a_i)$ for $0 \leq i < n$. Notably, a nondeterministic automaton can have many runs on a given input word. The run r is acceptable if $s_n \in F$.   
+
+\subsection{LTL over finite Traces}
+\noindent
+Classical LTL formulas are defined over infinite traces, which is widely used as a property language to describe reactive systems. Whereas $LTL_f$ formulas are intepreted on finite traces, which can be used in the AI community. Given a set $P$ of atomic propositions, the syntax of an $LTL_f$ formula $\phi$ is defined by :  \\
+$\phi:=p |\ \neg\ \phi\ |\ \phi \vee \phi\ |\ \phi \wedge \phi\ |\ X \phi\ |\ X_{w} \phi\ |\ \phi U \phi\ |\ \phi R \phi$ \\
+where $p \in P$, $X$(strong Next), $X_{w} \phi$(weak Next), $U$(Until), and $R$(Release) are temporal operators. We say $\phi$ is a $literal$ if it is a proposition or its negation. \\
+According to the $LTL_f$ semantics, it holds $X_{w} \phi$ $\equiv$ $\neg X \neg \phi$ and $ \phi_1 R \phi_2 \equiv \neg(\neg \phi_1 U \phi_2 )$. Boolean operators, such as $ \rightarrow and  \leftrightarrow $, can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant true as tt, false as ff. Therefore, $ff R \phi$ and $tt U \phi$ can be used to describe $G\phi$(Global) and $F\phi$(Eventually). Morever, we use $CF(\phi)$ to denote the set of conjunts in $\phi$. Notably, the root of these conjuncts is not a conjunction. \\
+The semantics of $LTL_f$ is defined in the following way: \\
+$\bullet$ $\eta \models tt$ and $\eta \not \models $ ff\\
+$\bullet$ If $\phi=p$ is a literal, then $\eta \models \phi$ iff $p \in \eta^{1}$\\
+$\bullet$ If $\phi=X \psi,$ then $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi$\\
+$\bullet$ If $\phi=X_{w} \psi,$ then $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi,$ or $|\eta|=1$\\
+$\bullet$ If $\phi=\phi_{1} U \phi_{2}$, then $\eta=\phi$ iff there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{2},$ and for every $0 \leq j<i$ it holds $\eta_{j} \models \phi_{1}$ as well;\\
+$\bullet$ If $\phi=\phi_{1} R \phi_{2}$, then $\eta \models \phi$ iff either for every $0 \leq i<|\eta|, \eta_{i}\models \phi_{2}$ holds, or there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{1}$ and for all $0 \leq j \leq i$ it holds $\eta_{j} \models \phi_{2}$ as well;\\
+$\bullet$ If $\phi=\phi_{1} \wedge \phi_{2},$ then $\eta \models \phi$ iff $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$ \\
+$\bullet$ If $\phi=\phi_{1} \vee \phi_{2},$ then $\eta \models \phi$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$ 

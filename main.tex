@@ -1,0 +1,119 @@
+\documentclass[twoside]{article}
+
+\usepackage{amsfonts,amssymb,amsbsy,textcomp,marvosym,amsmath,caption,threeparttable,amsthm,subfigure}
+\usepackage{eurosym,mathrsfs,fancyhdr,CJK,multicol,graphics,indentfirst,color,bm,upgreek,booktabs,graphicx}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{setspace}
+\usepackage{algpseudocode}
+\usepackage[linesnumbered,boxed,ruled,commentsnumbered]{algorithm2e}
+\usepackage{graphicx}
+\looseness=-1
+%------------Page layout and margin and Headrule-------------
+\headsep=5mm \headheight=4mm \topmargin=0cm \oddsidemargin=-0.5cm
+\evensidemargin=-0.5cm \marginparwidth=0pt \marginparsep= 0pt
+\marginparpush=0pt \textheight=23.1cm \textwidth=17.5cm \footskip=8mm
+\columnsep=7mm \setlength{\doublerulesep}{0.1pt}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotesep=3.5mm\arraycolsep=2pt
+\font\tenrm=cmr10
+%===========================================================
+\def\footnoterule{\kern 1mm \hrule width 10cm \kern 2mm}
+\def\rmd{{\rm d}} \def\rmi{{\rm i}} \def\rme{{\rm e}}
+\def\sj#1{$^{[#1]}$}\def\lt{\left}\def\rt{\right}
+\renewcommand{\captionfont}{\footnotesize}
+\renewcommand\tablename{\bf \footnotesize Table}
+\renewcommand\figurename{\footnotesize Fig.\!\!}
+\captionsetup{labelsep=period}%
+\allowdisplaybreaks
+\sloppy
+\renewcommand{\headrulewidth}{0pt}
+\catcode`@=11
+\def\title#1{\vspace{3mm}\begin{flushleft}\vglue-.1cm\Large\bf\boldmath\protect\baselineskip=18pt plus.2pt minus.1pt #1
+\end{flushleft}\vspace{1mm} }
+\def\author#1{\begin{flushleft}\normalsize #1\end{flushleft}\vspace*{-4pt} \vspace{3mm}}
+\def\address#1#2{\begin{flushleft}\vglue-.35cm${}^{#1}$\small\it #2\vglue-.35cm\end{flushleft}\vspace{-2mm}\par}
+\def\jz#1#2{{$^{\footnotesize\textcircled{\tiny #1}}$\footnotetext{$^{\footnotesize\textcircled{\tiny #1}}$#2}}}
+\def\jzd#1#2{$^{\footnotesize\textcircled{\tiny{#1}}}$\footnotetext{$^{\footnotesize\textcircled{\tiny{#1}}}$#2}}
+\catcode`@=11
+\def\section{\@startsection{section}{1}{\z@}%
+ %{-3.5ex \@plus -1ex \@minus -.2ex}%
+ {-3ex \@plus -.3ex \@minus -.2ex}%
+ {2.2ex \@plus.2ex}%
+{\normalfont\normalsize\protect\baselineskip=14.5pt plus.2pt minus.2pt\bfseries}}
+\def\subsection{\@startsection{subsection}{2}{\z@}%
+ %{-3.25ex\@plus -1ex \@minus -.2ex}%
+ {-3ex\@plus -.2ex \@minus -.2ex}%
+ {2ex \@plus.2ex}%
+{\normalfont\normalsize\protect\baselineskip=12.5pt plus.2pt minus.2pt\bfseries}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+ %{-3.25ex\@plus -1ex \@minus -.2ex}%
+ {-2.2ex\@plus -.21ex \@minus -.2ex}%
+ {1.4ex \@plus.2ex}
+{\normalfont\normalsize\protect\baselineskip=12pt plus.2pt minus.2pt\sl}}
+\def\proofname{{\indent \it Proof.}}
+%===========================================================ÒÔÉÏ²»¶¯
+
+\pagestyle{fancy}
+\fancyhf{}% Çå¿ÕÒ³Ã¼Ò³½Å
+\fancyhead[LO]{\small\sl Shortened Title Within 45 Characters}%
+\fancyhead[RO]{\small\thepage}
+\fancyhead[LE]{\small\thepage}
+\fancyhead[RE]{\small\sl J. Comput. Sci. \& Technol.}
+\setcounter{page}{1}
+\begin{document}
+\thispagestyle{empty}
+\vspace*{-13mm}
+\noindent {\small Yingying Shi, Shengping Xiao, Jianwen Li, Geguang Pu. SAT-Based Automata Construction for LTL over Finite Traces. JOURNAL OF COMPUTER SCIENCE AND TECHNOLOGY}
+%===========================================================
+\vspace*{2mm}
+
+\title{SAT-Based Automata Construction for LTL over Finite Traces} 
+\author{Yingying Shi, Shengping Xiao, Jianwen Li, and Geguang Pu}
+\textit{Addresss:Software Engineering Institute, East China Normal University, Shanghai 200062, China  }             \\                           
+Email: 51184501042@stu.ecnu.edu.cn 
+
+%\footnotetext{{}\\[-4mm]\indent\quad Regular Paper}
+
+\noindent {\small\bf Abstract} \quad  {\small{In this paper,we consider Linear Temporal Logic over finite traces. We denote this logic by ($LTL_f$). We propose here a novel approach to translating an $LTL_f$ formula $\phi$ to a Non-deterministic Finite Automaton (NFA) $A_{\phi}$. We first translate the given $LTL_f$ formula $\phi$ into Next Normal Form (XNF). Then we use a SAT-based framework to construct the corresponding NFA. Notably, the construction we present here is an on-the-fly construction.}}
+
+\vspace*{3mm}
+
+\noindent{\small\bf Keywords} \quad {\small $LTL_f$, SAT-based, on-the-fly construction}
+
+\vspace*{4mm}
+
+\baselineskip=18pt plus.2pt minus.2pt
+\parskip=0pt plus.2pt minus0.2pt
+\begin{multicols}{2}
+
+\input{intro.tex}
+\input{pre.tex}
+\input{nfa.tex}
+\input{dfa.tex}
+
+
+
+
+
+
+\section{ Conclusions}
+
+Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance and results of the work, and/or suggest applications and extensions.
+
+\vspace{2mm}
+
+ 
+
+\begin{thebibliography}{99}
+\footnotesize
+\itemsep=-3pt plus.2pt minus.2pt
+\baselineskip=13pt plus.2pt minus.2pt
+\bibitem{1}Sayah J Y, Kime C R. Test scheduling in high performance VLSI system implementations. {\it IEEE Trans. Computers}, 1992, 41(1): 52-67.  [\textcolor{blue}{example for journal paper}]
+
+
+\end{thebibliography}
+
+\label{last-page}
+\end{multicols}
+\end{document}
+
