@@ -3,10 +3,12 @@
 \usepackage{amsfonts,amssymb,amsbsy,textcomp,marvosym,amsmath,caption,threeparttable,amsthm,subfigure}
 \usepackage{eurosym,mathrsfs,fancyhdr,CJK,multicol,graphics,indentfirst,color,bm,upgreek,booktabs,graphicx}
 \usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
 \usepackage{setspace}
 \usepackage{algpseudocode}
 \usepackage[linesnumbered,boxed,ruled,commentsnumbered]{algorithm2e}
 \usepackage{graphicx}
+\usepackage{xspace}
 \looseness=-1
 %------------Page layout and margin and Headrule-------------
 \headsep=5mm \headheight=4mm \topmargin=0cm \oddsidemargin=-0.5cm
@@ -52,6 +54,21 @@
 {\normalfont\normalsize\protect\baselineskip=12pt plus.2pt minus.2pt\sl}}
 \def\proofname{{\indent \it Proof.}}
 %===========================================================ÒÔÉÏ²»¶¯
+
+\newtheorem{theorem}{Theorem}
+
+\newcommand\ltl{\textsf{LTL}\xspace}
+\newcommand\ltlf{\textsf{LTL}$_f$\xspace}
+\renewcommand{\tt}{{\sf tt}\xspace}
+\newcommand{\ff}{{\sf ff}\xspace}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\G}{\Box}
+\newcommand{\F}{\Diamond}
+\newcommand{\cf}{{\sf CF}\xspace}
+\newcommand{\A}{\mathcal{A}}
 
 \pagestyle{fancy}
 \fancyhf{}% Çå¿ÕÒ³Ã¼Ò³½Å

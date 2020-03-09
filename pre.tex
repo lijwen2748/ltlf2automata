@@ -1,15 +1,37 @@
 \section{Preliminaries}
-\subsection{LTL over finite Traces}
-\noindent
-Classical LTL formulas are defined over infinite traces, which is widely used as a property language to describe reactive systems. Whereas $LTL_f$ formulas are intepreted on finite traces, which can be used in the AI community. Given a set $P$ of atomic propositions, the syntax of an $LTL_f$ formula $\phi$ is defined by :  \\
-$\phi:=tt \ |\ p\ |\neg\ \phi\ |\ \phi \vee \phi\ |\ \phi \wedge \phi\ |\ X \phi\ |\ X_{w} \phi\ |\ \phi U \phi\ |\ \phi R \phi$ \\
-where $p \in P$, $X$(strong Next), $X_{w} \phi$(weak Next), $U$(Until), and $R$(Release) are temporal operators. We say $\phi$ is a $literal$ if it is a proposition or its negation. According to the $LTL_f$ semantics, it holds $X_{w} \phi$ $\equiv$ $\neg X \neg \phi$ and $ \phi_1 R \phi_2 \equiv \neg(\neg \phi_1 U \phi_2 )$. Boolean operators, such as $ \rightarrow and  \leftrightarrow $, can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant true as tt, false as ff. Therefore, $ff R \phi$ and $tt U \phi$ can be used to describe $G\phi$(Global) and $F\phi$(Eventually). Morever, we use $CF(\phi)$ to denote the set of conjunts in $\phi$. Notably, the root of these conjuncts is not a conjunction. \\
-The semantics of $LTL_f$ is defined in the following way: \\
-$\bullet$ $\eta \models tt$ and $\eta \not \models $ ff\\
-$\bullet$ If $\phi=p$ is a literal, then $\eta \models \phi$ iff $p \in \eta^{1}$\\
-$\bullet$ If $\phi=X \psi,$ then $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi$\\
-$\bullet$ If $\phi=X_{w} \psi,$ then $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi,$ or $|\eta|=1$\\
-$\bullet$ If $\phi=\phi_{1} U \phi_{2}$, then $\eta=\phi$ iff there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{2},$ and for every $0 \leq j<i$ it holds $\eta_{j} \models \phi_{1}$ as well;\\
-$\bullet$ If $\phi=\phi_{1} R \phi_{2}$, then $\eta \models \phi$ iff either for every $0 \leq i<|\eta|, \eta_{i}\models \phi_{2}$ holds, or there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{1}$ and for all $0 \leq j \leq i$ it holds $\eta_{j} \models \phi_{2}$ as well;\\
-$\bullet$ If $\phi=\phi_{1} \wedge \phi_{2},$ then $\eta \models \phi$ iff $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$ \\
-$\bullet$ If $\phi=\phi_{1} \vee \phi_{2},$ then $\eta \models \phi$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$ 
+\subsection{LTL over finite Traces (\ltlf)}
+Classical \ltl formulas are interpreted over infinite traces, which are widely used as the formal property languages to describe system behaviors. Meanwhile, the formulas of \ltlf, which is a variant of \ltl, are interpreted over finite traces. \ltlf are so far widely used in the AI community to describe finite system bahaviors. Given a set $P$ of atomic propositions, the syntax of an \ltlf formula $\phi$ is shown as below.
+
+\begin{center}
+$\phi:=\tt\ |\ \ff\ |\ p\ |\neg\phi\ |\ \phi \vee \phi\ |\ \phi \wedge \phi\ |\ \X \phi\ |\ \N \phi\ |\ \phi \U \phi\ |\ \phi \R \phi$ 
+\end{center}
+
+In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N \phi$ (weak Next), $\U$ (Until), and $\R$ (Release) are temporal operators. We say $\phi$ is a \emph{literal} if $\phi$ is a proposition or the negation of a proposition. $\X$ and $\N$ (resp. $\U$ and $\R$) are dual operators, i.e. $\X\phi\equiv \neg(\N\neg\phi)$ (resp. $\phi_1\U\phi_2 \equiv \neg (\neg\phi_1 \R\neg\phi_2)$) is semantically true. Boolean operators such as $\rightarrow$ and $\leftrightarrow$ can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant \textsf{true} as \tt and \textsf{false} as \ff. We use the particular notation $\F$ (Future) (resp. $\G$ (Global)) for $\U$ (resp. $\R$) such that $\F\phi \equiv \tt\U\phi$ (resp. $\G\phi \equiv \ff \R\phi$) is semantically true. Moreover, we use $\cf(\phi)$ to denote the set of conjuncts in $\phi$, i.e., $\cf{\phi} = \{\phi_i | 1\leq i\leq n\}$ for $\phi = \bigwedge_{1\leq i\leq n}\phi_i$. Notably, the root of these conjuncts is not a conjunction. Let $\Sigma = 2^P$ be the set of alphabet and $\eta\in\Sigma^+$ is a finite trace defined over $\Sigma$. We use $\eta[i]$ to denote the $i$-th element of $\eta$, use $\eta_i$ to denote the suffix of $\eta$ starting from position $i$ (including $i$), and use $|\eta|$ to denote the length of $\eta$. Then the semantics of \ltlf formulas are interpreted as follows.
+\begin{itemize}
+\item  $\eta \models \tt$ and $\eta \not\models \ff$;
+\item  If $\phi = p$ is a literal, $\eta \models \phi$ iff $p \in \eta[0]$;
+\item  If $\phi = \X \psi$, $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi$;
+\item  If $\phi = \N \psi$, $\eta \models \phi$ iff either $|\eta| = 1$, or $\eta_{1} \models \psi$;
+\item  If $\phi = \phi_{1} \U \phi_{2}$, $\eta \models\phi$ iff there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{2}$, and for every $0 \leq j<i$ it holds that $\eta_{j} \models \phi_{1}$;
+\item  If $\phi = \phi_{1} \R \phi_{2}$, $\eta \models \phi$ iff either for every $0 \leq i<|\eta|$ it holds $\eta_{i}\models \phi_{2}$, or there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{1}$ and for all $0 \leq j \leq i$ it holds $\eta_{j} \models \phi_{2}$;
+\item  If $\phi = \phi_{1} \wedge \phi_{2}$, $\eta \models \phi$ iff $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$;
+\item  If $\phi=\phi_{1} \vee \phi_{2}$, $\eta \models \phi$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.
+\end{itemize}
+
+In the rest of the paper, all \ltlf formulas are considered in the \emph{Negated Normal Form} (NNF), i.e., every negation appears only in front of an atom. 
+
+\subsection{Finite Automata}
+\noindent A finite automaton $\A$ is a tuple $(\Sigma, S, \rho, s_0, F)$ where 
+\begin{itemize}
+	\item $\Sigma$ is the set of alphabet;
+	\item $S$ is the set of states;
+	\item $\rho: S\times\Sigma \rightarrow 2^S$ is the transition function. We say $(s_1,\omega, s_2)$ is a \emph{transition} iff $s_2\in\rho(s_1,\omega)$;
+	\item $s_0\in S$ is the initial state;
+	\item $F\subseteq S$ is the set of accepting states. 
+\end{itemize}
+Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A run $r$ of $\A$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. We say $\eta$ is accepted by $\A$ iff there is a run $r$ of $\A$ on $\eta$ which ends with some accepting state in $F$. $\A$ is called deterministic iff $|\rho(s,\omega)| \leq 1$ for every $s\in S$ and $\omega\in\Sigma$; otherwise, $\A$ is nondeterministic.   
+
+\begin{theorem}[\cite{GV13}]
+Given an \ltlf formula $\phi$, there is an nondeterministic finite automaton $\A$ such that $\eta\models\phi$ iff $\eta$ is accepted by $\A$, for a finite trace $\eta\in\Sigma^+$.
+\end{theorem}
+
