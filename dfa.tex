@@ -1,0 +1,9 @@
+\section{DFA}
+We define the propositional assignments set of a $LTL_f$ formula $\phi$ as $SA(\phi)=\{A|\ A\ is\ a\ propositional\ assignment\ of\ \phi^p\}$. And we denote $tran(SA)=\{L(A)|\ A\in SA\}$ and $d(\sigma,SA)=\{X(A)|A\in SA\land\sigma=L(A)\}$.
+
+Given an $LTL_f$ formula $\phi$ and its literal set $L$, We define the automaton $A_{\phi}=(S,\Sigma,s_0,T,F)$ for:\\
+$S\subseteq2^{2^{cl\phi} }$\\
+$\Sigma=2^L$\\
+$s_0=\{\{\phi\}\}$\\
+$T: S\times\Sigma\to~S$, $s_1\times\sigma\to s_2\in T$ iff $\sigma \in tran(\phi)\land s_2=d(\sigma,SA(\phi))$, where $\phi=(xnf(\mathop{\lor}\limits_{x_i\in s_1}(\mathop{\land} x_i)))^p$\\
+$F: s\in F$ iff there exists a transition $s_1\times\sigma\to s$ $s.t.$~$\land\sigma_i\models \mathop{\lor}\limits_{x_i\in s}(\mathop{\land} x_i)$
