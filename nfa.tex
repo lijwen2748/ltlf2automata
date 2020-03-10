@@ -1,67 +1,110 @@
 \section{SAT-Based Automata Construction}
-In this section, we construct the $LTL_f$ transition system by SAT solvers. Before defining the transition system, we need to introduce some definitions.\\
-\subsection{$LTL_f$ Transition System}
-First, we need to consider $LTL_f$ formulas as propositional formulas. And to this end, all temporal subformulas of $\phi$ are treated as atomic propositions. \\
-{\bf Definition 1} (Propositional Atoms). {\it For an $LTL_f$ formula $\phi$, we define $PA(\phi)$ as follows:\\
-1) If $\phi$ is an atom, Next, Until or Release formula, $PA(\phi)=\{\phi\}$;\\
-2) If $\phi = (\neg \psi)$, then $PA(\phi)= PA(\psi)$;\\
-3) If $\phi = (\phi_1 \wedge \phi_2)$ or $(\phi_1 \vee \phi_2)$, then $PA(\phi) = PA(\phi_1) \cup PA(\phi_2)$.
-}     \\
-Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. In this case, we have $PA(\phi)=\{a, c, (\neg c \wedge a)\U b), (\X (a \vee b))\}$. 
-{\bf Definition 2} (Propositional Formulas). {\it Given an $LTL_f$ formula $\phi$, let $\phi^{p}$ be a propositional formula over $PA(\phi)$. \\}
-Consider  $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From definition 2, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two boolean variables denoting the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. \\
-{\bf Definition 3} (Next Normal Form). {\it For an $LTL_f$ formula $\phi$, $\phi$ is in Next Normal Form(XNF) if every subformula $\X \phi$ is of the form $\X \X \phi^{\prime}, \X a$ or $\X \neg a$ for some $a \in \Sigma$. The Next Normal Form $LTL_f$ formula $\phi$ is defined as follows:\\ 
-1) If $\phi$ is a literal l, $xnf(\phi) = \phi \wedge \X(tt)$;\\
-2)  $xnf(tt) =  tt$, $xnf(ff) =  \varnothing$;\\
-3) If $\phi = \X(\psi)$, $xnf(\phi) = tt \wedge \X(\psi) $;\\
-4) If $\phi = (\phi_1 \wedge \phi_2)$, $xnf(\phi) = \{\alpha_1 \wedge \alpha_2)\wedge \X(\psi_1 \wedge \psi_2)| \forall i = 1,2.$ $\alpha_i \wedge \X(\psi_i)\in xnf(\phi_i)$; \\
-5) If $\phi = (\phi_1 \vee \phi_2), xnf(\phi) = xnf(\phi_1)\vee xnf(\phi_2)$; \\
-6) If $\phi = (\phi_1 \U \phi_2), xnf(\phi) = xnf(\phi_2) \vee (xnf(\phi_1) \wedge \X(\phi))$; \\
-7) If $\phi = (\phi_1 \R \phi_2), xnf(\phi) = xnf(\phi)\vee (xnf(\phi_2) \wedge \X(\phi))$; \\
-}    
-By restricting $LTL_f$ formulas $\phi$ to XNF, we can obtain a satisfying assignment of $\phi^{p}$, leveraging a SAT solver.\\
-{\bf Definition 4} (Accepting States). {\it Given an $LTL_f$ formula $\phi$. Suppose that $s_1$ is a state of a transition system $T_{\phi}$. We say  $s_1$ is an accepting state iff there exists a transition $ s_1 \overset{\alpha}{\rightarrow}s_1$, and moreover $\alpha \models s_1$. }   \\   
-{\bf Definition 5} (Non-deterministic Finite Automaton). {\it An non-deterministic finite automaton is referred to by its acronym: NFA. Given an $LTL_f$ formula $\phi$ and its literal set L, $\Sigma = 2^{L}$. The representation of an NFA is a listing of five components: $A = (s_0,S, T, \Sigma, F)$ where:
-1) $s_0 = \{\phi \}$ is the initial state.\\
-2) S is a finite set of states.\\
-3) $T:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in T(s_1, \alpha) (\alpha \in \Sigma)$ holds iff $ \alpha \wedge \X(s_2) \in xnf(s_1)$.\\
-4) $\Sigma$ is a finite set of input symbols.\\
-5) F, a subset of S, is the set of accepting states.\\ }
-Intuitively, $T(s, a)$ is the set of states that A can move into when it is in state s and it reads the symbol a.  \\
-A run r of A on a finite word $w = a_0, ..., a_{n-1} \in \Sigma^{*}$ is a sequence $s_0, ..., s_n $of n+1 states in S such that $s_0 \in S_0$, and $s_{i+1} \in T(s_i, a_i)$ for $0 \leq i < n$. Notably, a nondeterministic automaton can have many runs on a given input word. A run r is accepting if $s_n \in F$.   \\
-{\bf Lemma 1.}  {\it For a finite trace $\eta \in \Sigma^{*}$ and $LTL_f$ formula $\phi$, if $\eta = w_0$, then $\eta \models \phi$ holds iff: \\ 
-$\bullet$ $\eta \models tt$ and $\eta \not \models $ ff;\\
-$\bullet$ If $\phi=p$ is a literal, then return true if $p \in \eta$, otherwise return false;\\
-$\bullet$ If $\phi=\X \psi$, then return false;\\
-$\bullet$ If $\phi=\N \psi,$ then return true;\\
-$\bullet$ If $\phi=\phi_{1} \U \phi_{2}$ or  $\phi=\phi_{1} \R \phi_{2}$, then return  $\eta \models \phi_{2}$; \\
-$\bullet$ If $\phi=\phi_{1} \wedge \phi_{2},$ then return $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$; \\
-$\bullet$ If $\phi=\phi_{1} \vee \phi_{2},$ then return $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.}
+
+In this section, we first construct the \ltlf transition system by \SAT solvers, based on which we can generate the corresponding \NFA for the given \ltlf formula. 
+
+\subsection{\ltlf Transition System}
+
+To leverage \SAT solvers for the \ltlf-to-\NFA construction, we first consider \ltlf formulas as propositional formulas. The motivation comes from treating all temporal subformulas of $\phi$ as atomic propositions. 
+
+\begin{definition}[Propositional Atoms]\label{def:pa}
+For an \ltlf formula $\phi$, we define the set of propositional atoms, $\PA(\phi)$, recursively as follows.
+\begin{itemize}
+	\item If $\phi$ is an atom, Next, Until or Release formula, $\PA(\phi)=\{\phi\}$;
+	\item If $\phi = (\neg \psi)$, $\PA(\phi)= \PA(\psi)$;
+	\item If $\phi = (\phi_1 \wedge \phi_2)$ or $(\phi_1 \vee \phi_2)$, $\PA(\phi) = \PA(\phi_1) \cup \PA(\phi_2)$.
+\end{itemize}
+\end{definition}
+
+Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. In this case, we have $\PA(\phi)=\{a, c, (\neg c \wedge a)\U b), (\X (a \vee b))\}$. 
+
+\begin{definition}[Propositional Formulas]\label{def:pf}
+Given an \ltlf formula $\phi$, let $\phi^{p}$ be a propositional formula over $\PA(\phi)$. 
+\end{definition}
+
+Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables w.r.t. the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. 
+
+\begin{definition}[Next Normal Form]\label{def:xnf}
+For an \ltlf formula $\phi$, we define the Next Normal Form, i.e., $\xnf(\phi)$, recursively as follows. 
+\begin{itemize}
+\item If $\phi$ is a literal or $\tt$, $\xnf(\phi) = \phi \wedge \X(\tt)$; $\xnf(\ff) = \ff$;
+\item If $\phi = \X(\psi)$ or $\phi = \N(\psi)$, $\xnf(\phi) = \tt \wedge \X(\psi)$;
+\item If $\phi = (\phi_1 \wedge \phi_2)$, $\xnf(\phi) = \xnf(\phi_1)\wedge\xnf(\phi_2)$;
+\item If $\phi = (\phi_1 \vee \phi_2), \xnf(\phi) = \xnf(\phi_1)\vee \xnf(\phi_2)$; 
+\item If $\phi = (\phi_1 \U \phi_2), \xnf(\phi) = \xnf(\phi_2) \vee (\xnf(\phi_1) \wedge \X(\phi))$; 
+\item If $\phi = (\phi_1 \R \phi_2), \xnf(\phi) = \xnf(\phi)\wedge (\xnf(\phi_2) \vee \N(\phi))$.
+\end{itemize}
+\end{definition}
+
+By restricting the \ltlf formula $\phi$ to the XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of a SAT solver.
+
+\begin{definition}[Accepting State] 
+For an \ltlf formula $\phi$ and $s$ being a state of the transition system $T_{\phi}$. $s$ is an accepting state iff there exists a transition $s \overset{\alpha}{\rightarrow}s$ in $T_{\phi}$ such that $\alpha \models s$ holds. 
+\end{definition}
+   
+\begin{definition}[NFA Construction]\label{def:ltlf2nfa} 
+Given an $LTL_f$ formula $\phi$ and its literal set $L$, $\Sigma = 2^{L}$, the representation of an NFA $\A$ is tuple $(\Sigma, S, \rho, s_0, F)$ such that
+\begin{itemize}
+	\item $\Sigma$ is the set of alphabet;
+	\item $S\subseteq 2^{\cl(\phi)}$ is the set of states;
+	\item $\rho:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in \rho(s_1, \alpha) (\alpha \in \Sigma)$ holds iff $ \alpha \wedge \X(s_2) \Rightarrow \xnf(s_1)$;
+	\item $s_0 = \{\phi \}$ is the initial state;
+	\item $F\subseteq S$ is the set of accepting states. 
+\end{itemize}
+\end{definition}
+
+
+\begin{lemma}\label{lem:oneSat}
+For a finite trace $\eta \in \Sigma^{+}$ and \ltlf formula $\phi$, if $\eta = \omega_0$, then $\eta \models \phi$ holds iff
+\begin{itemize}
+	\item $\eta \models \tt$ and $\eta \not \models \ff$;
+	\item If $\phi=p$ is a literal, then return true if $p \in \eta$, otherwise return false;
+	\item If $\phi=\X \psi$, then return false;
+	\item If $\phi=\N \psi,$ then return true;
+	\item If $\phi=\phi_{1} \U \phi_{2}$ or  $\phi=\phi_{1} \R \phi_{2}$, then return  $\eta \models \phi_{2}$;
+	\item If $\phi=\phi_{1} \wedge \phi_{2},$ then return $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$;
+	\item If $\phi=\phi_{1} \vee \phi_{2},$ then return $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.
+\end{itemize}
+\end{lemma}
 
 \begin{proof}
-The lemma is self-evident which can be derived from the semantics of $LTL_f$.
+The lemma is self-evident which can be derived from the semantics of \ltlf.
 \end{proof}
 
-Now we characterize the satisfaction relation for finite sequences: \\
-{\bf Lemma 2.}  {\it For a finite trace $\eta = w_0w_1...w_n \in \Sigma^{*}$ and $LTL_f$ formula $\phi$. $\eta \models \phi$ iff there exists a run $r = \phi \overset{\alpha_0}{\rightarrow}\phi_1\overset{\alpha_1}{\rightarrow}\phi_2...\overset{\alpha_n}{\rightarrow}\phi_{n+1}$ in NFA $A_{\phi}$ s.t. every $0 \leq i \leq n$ it holds that $w_i \models \alpha_i$ and $\eta_i \models \phi_i $.}
+Now we characterize the satisfaction relation for finite sequences whose lengths are greater than 1.
+
+\begin{lemma}\label{lem:finiteSat}
+For a finite trace $\eta = \omega_0\omega_1\ldots \omega_n \in \Sigma^{+}$ and \ltlf formula $\phi$, $\eta \models \phi$ holds iff there exists a run $r = \phi \overset{\alpha_0}{\rightarrow}\phi_1\overset{\alpha_1}{\rightarrow}\phi_2...\overset{\alpha_n}{\rightarrow}\phi_{n+1}$ in the \NFA $\A_{\phi}$ s.t. $\omega_i \models \alpha_i$ and $\eta_i \models \phi_i $ holds for every $0 \leq i \leq n$.
+\end{lemma}
 \begin{proof}
-The Lemma above can be proved by recursively applying the first item if $n = 0$, and the second item if $n \geq 1$. \\
-1) If n = 0, then $\eta \models \phi$ iff there exists $ \alpha \wedge \X\phi \in xnf(\phi)$ or $\alpha_i \wedge \X(tt) \in xnf(\phi)$ s.t. $w_0 \models \alpha, \alpha \models \phi$.\\
-2) If $n \geq 1$, then  $\eta \models \phi$ iff there exists  $ \alpha_i \wedge \X\phi_i \in xnf(\phi)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i $.
+The Lemma above can be proved by recursively applying the first item if $n = 0$, and the second item if $n \geq 1$. 
+\begin{enumerate}
+	\item If $n = 0$, $\eta \models \phi$ holds iff there exists $\alpha \wedge \X\phi \in \xnf(\phi)$ or $\alpha_i \wedge \X(\tt) \in \xnf(\phi)$ s.t. $\omega_0 \models \alpha$ and $\alpha \models \phi$;
+	\begin{itemize}
+		\item If $\phi = p$, then $\eta \models \phi$ iff $w_0 \models$ p, and p $\models \phi$ hold. According to Definition 2, $p \wedge \X(tt) \in xnf(p)$;
+		\item If $\phi=\X \psi$, according to Lemma 1, $\eta \models \X \psi$ is always false. Similiarly, If $\phi=\N \psi$, $\eta \models \N \psi$ is always true;
+		\item If $\phi=\phi_{1} \U \phi_{2}$, according to Lemma 1, $\eta \models \phi$ iff $\eta \models \phi_{2}$. $xnf(\phi_{2})=\phi_{2} \wedge \X(tt)$, then  $w_0 \models \phi_{2}$, and $\phi_{2} \models \phi_{2}$, thus the proof is done. The proof for the case $\phi=\phi_{1} \R \phi_{2}$ is similar;
+		\item If $\phi=\phi_{1} \wedge \phi_{2}$, according to Definition 3, there exists $\beta_i \wedge \X\psi_i \in xnf(\phi)(i = 1,2).$ Let $\alpha = \beta_1 \wedge \beta_2$ and $\psi = \phi_1 \wedge \phi_2$, then $w_0 \models \alpha$ and $\alpha \models \phi$ hold. Similarly, the proof for the case when $\phi = \phi_1 \vee \phi_2$ is the same.
+	\end{itemize}
+	\item  If $n \geq 1$, $\eta \models \phi$ holds iff there exists $\alpha_i \wedge \X\phi_i \in \xnf(\phi)$ s.t. $\omega_0 \models \alpha_i$ and $\eta_1 \models \phi_i$.
+	\begin{itemize}
+		\item If $\phi_i = p$, then $\eta \models \phi$ iff $w_0 \models \phi$, and $\eta_1 \models tt$, according to Definition 2, $xnf(p)=p \wedge \X(tt)$, then proof is done.\\
+ 		\item If $\phi_i=\X \psi$ or $\eta \models \N \psi$, then $\eta \models \phi$ iff $w_0 \models tt$ and $\eta_1 \models \psi$. According to Lemma 1, $tt \wedge \X\phi_2 \in xnf(\phi)$.\\
+		\item If $\phi=\phi_1 \wedge \phi_2$, then $\eta \models \phi_1 \U \phi_2$ iff $\eta \models \phi_1$ and $\eta \models \phi_2$, and iff there exists $\beta_i \wedge \X\psi_i \in xnf(\phi_i)(i=1,2)$ s.t. $w_0 \models \beta_1 \wedge \beta_2$ and $\eta_1 \models \psi_1 and \psi_2$. According to Definition ,$(\beta_1 \wedge \beta_2)\wedge \X(\psi_1 and \psi_2)$. The proof for the case when $\phi_i=\psi_{1} \vee \psi_{2}$ is similar. \\
+ 		\item If $\phi_i=\phi_{1} \U \phi_{2}$, then $\eta \models \phi$ iff $\eta \models \phi_2$ or $\eta \models (\phi_1 \wedge \X\phi)$. If $\eta \models \phi_2$ holds, then $\eta \models \phi$ iff there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. According to Definition , there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$. On the other hand, if $\eta \models (\phi_1 \wedge \X\phi)$ holds, the proof for the case when the operator is $\wedge$ is done. So $\eta \models \phi$ iff there exists $\alpha_i \wedge \phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. The proof the case when $\phi=\phi_1 \R \phi_2$ is similar.
+	\end{itemize}
+\end{enumerate}
 
-1) $\bullet$ If $\phi = p$, then $\eta \models \phi$ iff $w_0 \models$ p, and p $\models \phi$ hold. According to Definition 2, $p \wedge \X(tt) \in xnf(p)$.\\
-$\bullet$ If $\phi=\X \psi$, according to Lemma 1, $\eta \models \X \psi$ is always false. Similiarly, If $\phi=\N \psi$, $\eta \models \N \psi$ is always true.\\
-$\bullet$ If $\phi=\phi_{1} \U \phi_{2}$, according to Lemma 1, $\eta \models \phi$ iff $\eta \models \phi_{2}$. $xnf(\phi_{2})=\phi_{2} \wedge \X(tt)$, then  $w_0 \models \phi_{2}$, and $\phi_{2} \models \phi_{2}$, thus the proof is done. The proof for the case $\phi=\phi_{1} \R \phi_{2}$ is similar. \\
-$\bullet$ If $\phi=\phi_{1} \wedge \phi_{2}$, according to Definition 3, there exists $\beta_i \wedge \X\psi_i \in xnf(\phi)(i = 1,2).$ Let $\alpha = \beta_1 \wedge \beta_2$ and $\psi = \phi_1 \wedge \phi_2$, then $w_0 \models \alpha$ and $\alpha \models \phi$ hold. Similarly, the proof for the case when $\phi = \phi_1 \vee \phi_2$ is the same. \\
-2) The second item can be proved by structural induction over $\phi$.\\
- $\bullet$ If $\phi_i = p$, then $\eta \models \phi$ iff $w_0 \models \phi$, and $\eta_1 \models tt$, according to Definition 2, $xnf(p)=p \wedge \X(tt)$, then proof is done.\\
- $\bullet$ If $\phi_i=\X \psi$ or $\eta \models \N \psi$, then $\eta \models \phi$ iff $w_0 \models tt$ and $\eta_1 \models \psi$. According to Lemma 1, $tt \wedge \X\phi_2 \in xnf(\phi)$.\\
-$\bullet$ If $\phi=\phi_1 \wedge \phi_2$, then $\eta \models \phi_1 \U \phi_2$ iff $\eta \models \phi_1$ and $\eta \models \phi_2$, and iff there exists $\beta_i \wedge \X\psi_i \in xnf(\phi_i)(i=1,2)$ s.t. $w_0 \models \beta_1 \wedge \beta_2$ and $\eta_1 \models \psi_1 and \psi_2$. According to Definition ,$(\beta_1 \wedge \beta_2)\wedge \X(\psi_1 and \psi_2)$. The proof for the case when $\phi_i=\psi_{1} \vee \psi_{2}$ is similar. \\
- $\bullet$ If $\phi_i=\phi_{1} \U \phi_{2}$, then $\eta \models \phi$ iff $\eta \models \phi_2$ or $\eta \models (\phi_1 \wedge \X\phi)$. If $\eta \models \phi_2$ holds, then $\eta \models \phi$ iff there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. According to Definition , there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$. On the other hand, if $\eta \models (\phi_1 \wedge \X\phi)$ holds, the proof for the case when the operator is $\wedge$ is done. So $\eta \models \phi$ iff there exists $\alpha_i \wedge \phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. The proof the case when $\phi=\phi_1 \R \phi_2$ is similar.
 \end{proof}
-Lemma 2 demotes that, to check whether a finite trace $\eta = w_0 w_1 ... w_n$ satisfies an $LTL_f$ formula $\phi$, iff we can find a trace of an NFA $A_\phi$ s.t. $\eta$ can finally reach an accepting state. Now we show the main theorem of this paper.\\
-{\bf Theorem 1.}  {\it For a finite trace  $\eta = w_0w_1...w_n $ and $LTL_f$ formula $\phi$, $\eta \models \phi$ iff $\eta$ can be accepted by the NFA $A_\phi$.}
-\begin{proof} $(\Leftarrow)$ If $\eta$ can be accepted by the NFA $A_{\phi}$, then there exists a finite trace $\eta$ s.t. the corresponding run r of NFA $A_{\phi}$ on $\eta$ ends with  an accepting state $\phi_n$. According to Lemma 2, $\eta \models \phi$. \\
-$(\Rightarrow)$ Since $\eta$ is a finite trace, $\eta \models \phi$. According to Lemma 2, there is a run r= $\phi_0 \to \phi_1 \to ...\phi_n$ where $\phi_n$ is an accepting state. Then $\eta \models \phi$(according to Definition 6).
+
+Lemma \ref{lem:finiteSat} denotes that, to check whether a finite trace $\eta = \omega_0 \omega_1\ldots \omega_n$ satisfies an \ltlf formula $\phi$, iff we can find a trace of an \NFA $\A_\phi$ s.t. $\eta$ can finally reach an accepting state. Now we show the main theorem of this paper.
+
+\begin{theorem}[Main Theorem]  
+For a finite trace  $\eta = \omega_0\omega_1\ldots \omega_n $ and \ltlf formula $\phi$, $\eta \models \phi$ iff $\eta$ can be accepted by the \NFA $\A_\phi$.
+\end{theorem}
+
+\begin{proof} 
+($\Leftarrow$) If $\eta$ can be accepted by the \NFA $\A_{\phi}$, there exists a finite trace $\eta$ s.t. the corresponding run $r$ of $\A_{\phi}$ on $\eta$ which ends with an accepting state $\phi_n$. According to Lemma \ref{lem:finiteSat}, $\eta \models \phi$. 
+
+($\Rightarrow$) Since $\eta$ is a finite trace, $\eta \models \phi$. According to Lemma \ref{lem:finiteSat}, there is a run $r= \phi_0 \to \phi_1 \to ...\phi_n$ such that $\phi_n$ is an accepting state. Then $\eta \models \phi$ is true (according to Definition \ref{def:ltlf2nfa}).
 \end{proof}
 
