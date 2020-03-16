@@ -2,7 +2,7 @@
 
 In this section, we first construct the \ltlf transition system by \SAT solvers, based on which we can generate the corresponding \NFA for the given \ltlf formula. 
 
-\subsection{\ltlf Transition System}
+\subsection{\ltlf-to-\NFA construction }
 
 To leverage \SAT solvers for the \ltlf-to-\NFA construction, we first consider \ltlf formulas as propositional formulas. The motivation comes from treating all temporal subformulas of $\phi$ as atomic propositions. 
 
@@ -23,8 +23,8 @@ Given an \ltlf formula $\phi$, let $\phi^{p}$ be a propositional formula over $\
 
 Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables w.r.t. the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. 
 
-\begin{definition}[Next Normal Form]\label{def:xnf}
-For an \ltlf formula $\phi$, we define the Next Normal Form, i.e., $\xnf(\phi)$, recursively as follows. 
+\begin{definition}[neXt Normal Form]\label{def:xnf}
+For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$, recursively as follows. 
 \begin{itemize}
 \item If $\phi$ is a literal or $\tt$, $\xnf(\phi) = \phi \wedge \X(\tt)$; $\xnf(\ff) = \ff$;
 \item If $\phi = \X(\psi)$ or $\phi = \N(\psi)$, $\xnf(\phi) = \tt \wedge \X(\psi)$;
@@ -102,9 +102,5 @@ Lemma \ref{lem:finiteSat} denotes that, to check whether a finite trace $\eta = 
 For a finite trace  $\eta = \omega_0\omega_1\ldots \omega_n $ and \ltlf formula $\phi$, $\eta \models \phi$ iff $\eta$ can be accepted by the \NFA $\A_\phi$.
 \end{theorem}
 
-\begin{proof} 
-($\Leftarrow$) If $\eta$ can be accepted by the \NFA $\A_{\phi}$, there exists a finite trace $\eta$ s.t. the corresponding run $r$ of $\A_{\phi}$ on $\eta$ which ends with an accepting state $\phi_n$. According to Lemma \ref{lem:finiteSat}, $\eta \models \phi$. 
 
-($\Rightarrow$) Since $\eta$ is a finite trace, $\eta \models \phi$. According to Lemma \ref{lem:finiteSat}, there is a run $r= \phi_0 \to \phi_1 \to ...\phi_n$ such that $\phi_n$ is an accepting state. Then $\eta \models \phi$ is true (according to Definition \ref{def:ltlf2nfa}).
-\end{proof}
 
