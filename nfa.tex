@@ -1,52 +1,56 @@
 \section{SAT-Based Automata Construction}
 
-In this section, we first construct the \ltlf transition system by \SAT solvers, based on which we can generate the corresponding \NFA for the given \ltlf formula. 
+In this section, we present the construction from an \ltlf formula to the equivalent \NFA and \DFA respectively. 
 
-\subsection{\ltlf-to-\NFA construction }
 
-To leverage \SAT solvers for the \ltlf-to-\NFA construction, we first consider \ltlf formulas as propositional formulas. The motivation comes from treating all temporal subformulas of $\phi$ as atomic propositions. 
+\subsection{\ltlf-to-\NFA Construction}
+
+To leverage \SAT solvers for the automata construction, we first need to consider \ltlf formulas as propositional formulas. The motivation comes from treating all temporal subformulas of $\phi$ as atomic propositions. 
 
 \begin{definition}[Propositional Atoms]\label{def:pa}
 For an \ltlf formula $\phi$, we define the set of propositional atoms, $\PA(\phi)$, recursively as follows.
 \begin{itemize}
-	\item If $\phi$ is an atom, Next, Until or Release formula, $\PA(\phi)=\{\phi\}$;
+	\item If $\phi$ is an atom, Next, weak Next, Until or Release formula, $\PA(\phi)=\{\phi\}$;
 	\item If $\phi = (\neg \psi)$, $\PA(\phi)= \PA(\psi)$;
 	\item If $\phi = (\phi_1 \wedge \phi_2)$ or $(\phi_1 \vee \phi_2)$, $\PA(\phi) = \PA(\phi_1) \cup \PA(\phi_2)$.
 \end{itemize}
 \end{definition}
 
-Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. In this case, we have $\PA(\phi)=\{a, c, (\neg c \wedge a)\U b), (\X (a \vee b))\}$. 
+Consider the formula $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$ as an example. According to Definition \ref{def:pa}, we have $\PA(\phi)=\{a, c, (\neg c \wedge a)\U b), (\X (a \vee b))\}$. Now we define the propositional formula over the propositional atoms w.r.t. an \ltlf formula.
 
 \begin{definition}[Propositional Formulas]\label{def:pf}
 Given an \ltlf formula $\phi$, let $\phi^{p}$ be a propositional formula over $\PA(\phi)$. 
 \end{definition}
 
-Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables w.r.t. the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. 
+Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables w.r.t. the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. We define the \emph{next normal form} for an \ltlf formula, whose corresponding propositional formula is the actual input of \SAT solvers.
 
 \begin{definition}[neXt Normal Form]\label{def:xnf}
 For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$, recursively as follows. 
 \begin{itemize}
-\item If $\phi$ is a literal or $\tt$, $\xnf(\phi) = \phi \wedge \X(\tt)$; $\xnf(\ff) = \ff$;
+\item $\xnf(\tt) = \tt$ and $\xnf(\ff) = \ff$;
+\item If $\phi$ is a literal, $\xnf(\phi) = \phi \wedge \X(\tt)$;
 \item If $\phi = \X(\psi)$ or $\phi = \N(\psi)$, $\xnf(\phi) = \tt \wedge \X(\psi)$;
 \item If $\phi = (\phi_1 \wedge \phi_2)$, $\xnf(\phi) = \xnf(\phi_1)\wedge\xnf(\phi_2)$;
 \item If $\phi = (\phi_1 \vee \phi_2), \xnf(\phi) = \xnf(\phi_1)\vee \xnf(\phi_2)$; 
 \item If $\phi = (\phi_1 \U \phi_2), \xnf(\phi) = \xnf(\phi_2) \vee (\xnf(\phi_1) \wedge \X(\phi))$; 
-\item If $\phi = (\phi_1 \R \phi_2), \xnf(\phi) = \xnf(\phi)\wedge (\xnf(\phi_2) \vee \N(\phi))$.
+\item If $\phi = (\phi_1 \R \phi_2), \xnf(\phi) = \xnf(\phi)\wedge (\xnf(\phi_2) \vee \X(\phi))$.
 \end{itemize}
 \end{definition}
 
 By restricting the \ltlf formula $\phi$ to the XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of a SAT solver.
-
+For a satisfying assignment $A$, we define $\X(A)=\{\theta\ |\ \X\theta\in A\}$ and $L(A) =\{l\ |\ l \textit{ is a literal}\}$. Informally speaking, if $\phi$ is a state in the \NFA, $\X(\xnf(\phi)^p)$ represents one of its successors and $L(\xnf(\phi)^p)$ represents the label on the transition from $\phi$ to $\X(\xnf(\phi)^p)$. Now we can present the construction for the equivalent \NFA. 
+\iffalse
 \begin{definition}[Accepting State] 
 For an \ltlf formula $\phi$ and $s$ being a state of the transition system $T_{\phi}$. $s$ is an accepting state iff there exists a transition $s \overset{\alpha}{\rightarrow}s$ in $T_{\phi}$ such that $\alpha \models s$ holds. 
 \end{definition}
+\fi
    
 \begin{definition}[NFA Construction]\label{def:ltlf2nfa} 
-Given an $LTL_f$ formula $\phi$ and its literal set $L$, $\Sigma = 2^{L}$, the representation of an NFA $\A$ is tuple $(\Sigma, S, \rho, s_0, F)$ such that
+Given an \ltlf formula $\phi$, the corresponding \NFA ${\A_{\phi}}^n$ is defined as a tuple $(\Sigma, S, \rho, s_0, F)$ such that
 \begin{itemize}
-	\item $\Sigma$ is the set of alphabet;
+	\item $\Sigma = 2^{L}$ is the set of alphabet, where $L$ is the literal set of $\phi$;
 	\item $S\subseteq 2^{\cl(\phi)}$ is the set of states;
-	\item $\rho:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in \rho(s_1, \alpha) (\alpha \in \Sigma)$ holds iff $ \alpha \wedge \X(s_2) \Rightarrow \xnf(s_1)$;
+	\item $\rho:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in \rho(s_1, \omega) (\omega \in \Sigma)$ holds iff there is a satisfying assignment $A$ of $\xnf(s_1)^p$ such that $s_2 = \X(A)$ and $\omega\Rightarrow L(A)$;
 	\item $s_0 = \{\phi \}$ is the initial state;
 	\item $F\subseteq S$ is the set of accepting states. 
 \end{itemize}
