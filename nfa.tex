@@ -37,74 +37,125 @@ For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$,
 \end{itemize}
 \end{definition}
 
-By restricting the \ltlf formula $\phi$ to the XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of a SAT solver.
-For a satisfying assignment $A$, we define $\X(A)=\{\theta\ |\ \X\theta\in A\}$ and $L(A) =\{l\ |\ l \textit{ is a literal}\}$. Informally speaking, if $\phi$ is a state in the \NFA, $\X(\xnf(\phi)^p)$ represents one of its successors and $L(\xnf(\phi)^p)$ represents the label on the transition from $\phi$ to $\X(\xnf(\phi)^p)$. Now we can present the construction for the equivalent \NFA. 
-\iffalse
-\begin{definition}[Accepting State] 
-For an \ltlf formula $\phi$ and $s$ being a state of the transition system $T_{\phi}$. $s$ is an accepting state iff there exists a transition $s \overset{\alpha}{\rightarrow}s$ in $T_{\phi}$ such that $\alpha \models s$ holds. 
-\end{definition}
-\fi
+By restricting the \ltlf formula $\phi$ to the \XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of a SAT solver.
+For a satisfying assignment $A$, we define $X(A)=\{\theta\ |\ \X\theta\in A\}$ and $L(A) =\{l\ |\ l \textit{ is a literal}\}$. Also for the simple description, \textbf{we mix the usage of $X(A)$ to denote the conjunction of all elements in the set, i.e., $\bigwedge_{\psi_i\in X(A)}\psi$. The same applies to $L(A)$.}
+The following lemma describes the relationship between an \ltlf formula and the satisfying assignment of its corresponding propositional formula.
+
+\begin{lemma}\label{lem:propSat}
+Given an \ltlf formula $\phi$ in the \XNF and a finite trace $\eta\in\Sigma^+$ with $|\eta|>1$, $\eta\models\phi$ holds iff there is a satisfying assignment $A$ of $\phi^p$ such that $\eta[0]\models L(A)$ and $\eta\models X(A)$.
+\end{lemma}
+\begin{proof}
+$(\Rightarrow)$ The proof can be achieved by induction over the types of $\phi$.
+\begin{itemize}
+	\item if $\phi$ is a literal, Next, Unitl or Release formula, $\eta\models\phi$ implies $\eta[0]\models\phi$. Let $A=\{\phi\}$ and it is true that $\eta[0]\models L(A)$ and $\eta_1\models X(A)$ (In this situation, $X(A)\equiv \tt$); 
+	\item if $\phi = \phi_1\wedge\phi_2$, $\eta\models\phi$ 
+implies $\eta\models\phi_1$ and $\eta\models\phi_2$. By assumption hypothesis, there is $A_i$ of $\phi_i^p$ ($i=1,2$) such that 
+$\eta[0]\models L(A_i)$ and $\eta_1\models X(A_i)$. Let $A = A_1\cup A_2$, and a consistent $A$, in which either $\psi$ or $\neg \psi$ cannot be together, 
+must exists ($A$ may not be unique because $A_1$ and $A_2$ may not be unique). 
+Otherwise, there is $\psi\in A_1$ and $\neg\psi\in A_2$ 
+such that $\eta$ cannot model $\bigwedge A_1$ and $\bigwedge A_2$ at the same time, which is a contradiction. So $A$ is a satisfying  assignment of $\phi^p$, which leads to $\eta[0]\models L(A)$ and $\eta_1\models X(A)$. 
+\item The proof for $\phi=\phi_1\vee\phi_2$ is analogous with the proof when $\phi = \phi_1\wedge\phi_2$. Also, Since $\phi$ is in \XNF, $\phi$ cannot be an Until or Release formula. The proof is done.
+\end{itemize} 
+
+$(\Leftarrow)$ $A$ is a satisfying assignment of $\phi^p$, so $A\models\phi^p$ implies $(\bigwedge A)\Rightarrow \phi$. 
+Also, $\eta[0]\models L(A)$ and $\eta_i\models X(A)$ implies $\eta\models \bigwedge A$. Therefore, it is true that $\eta\models \phi$.
+\end{proof}
+
+Lemma \ref{lem:propSat} does not cover the case when $|\eta|=1$, which yields the following corollary. 
+
+\begin{corollary}\label{coro:propSat}
+Given an \ltlf formula $\phi$ in the \XNF and a finite trace $\eta\in\Sigma^+$ with $|\eta|=1$, $\eta\models\phi$ holds implies there is a satisfying assignment $A$ of $\phi^p$ such that $\eta[0]\models L(A)$.
+\end{corollary}
+\begin{proof}
+The proof is similar to that of Lemma \ref{lem:propSat} for the ($\Rightarrow$) direction, the details of which are omitted here.
+\end{proof}
+  
+Informally speaking, if $\phi$ is a state in the \NFA, $X(\xnf(\phi)^p)$ represents one of its successors and $L(\xnf(\phi)^p)$ represents the label on the transition from $\phi$ to $X(\xnf(\phi)^p)$. Now we present the construction from an \ltlf formula to its equivalent transition-based \NFA. 
+
    
-\begin{definition}[NFA Construction]\label{def:ltlf2nfa} 
-Given an \ltlf formula $\phi$, the corresponding \NFA ${\A_{\phi}}^n$ is defined as a tuple $(\Sigma, S, \rho, s_0, F)$ such that
+\begin{definition}[Transition-based NFA (\TNFA)]\label{def:ltlf2nfa} 
+Given an \ltlf formula $\phi$, the corresponding transition-based \NFA ${\A_{\phi}}^{tn}$ is defined as a tuple $(\Sigma, S, \rho, s_0, T)$ such that
 \begin{itemize}
 	\item $\Sigma = 2^{L}$ is the set of alphabet, where $L$ is the literal set of $\phi$;
 	\item $S\subseteq 2^{\cl(\phi)}$ is the set of states;
-	\item $\rho:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in \rho(s_1, \omega) (\omega \in \Sigma)$ holds iff there is a satisfying assignment $A$ of $\xnf(s_1)^p$ such that $s_2 = \X(A)$ and $\omega\Rightarrow L(A)$;
+	\item $\rho:  S \times \Sigma \to 2^S$ is the transition function, where $s_2 \in \rho(s_1, \omega) (\omega \in \Sigma)$ holds iff there is a satisfying assignment $A$ of $\xnf(s_1)^p$ such that $s_2 = X(A)$ and $\omega\models L(A)$;
 	\item $s_0 = \{\phi \}$ is the initial state;
-	\item $F\subseteq S$ is the set of accepting states. 
+	\item $T\subseteq \rho$ is the set of accepting transitions. A transition $s_1\tran{\omega}s_2$ is in $T$ iff $\omega\models s_1$ holds. 
 \end{itemize}
 \end{definition}
 
+As Definition \ref{def:ltlf2nfa} shows, a state in the \NFA is a set of subformulas of the input $\phi$. For the simple description, \textbf{we mix the usage of a state $s$ such that it can also represent a Boolean formula $\bigwedge_{\psi_i\in s}\psi_i$, i.e., the conjunction of all subformulas in $s$.} 
 
-\begin{lemma}\label{lem:oneSat}
-For a finite trace $\eta \in \Sigma^{+}$ and \ltlf formula $\phi$, if $\eta = \omega_0$, then $\eta \models \phi$ holds iff
+A run $r$ of the transition-based \NFA ${\A_{\phi}}^{tn}$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. $\eta$ is accepted by ${\A_{\phi}}^{tn}$ iff there is a run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$ which ends with some accepting transition in $T$. 
+
+Since in Definition \ref{def:ltlf2nfa}, the satisfaction of a finite trace with length one to an \ltlf formula is used to determine the accepting conditions, we introduce the following theorem to show that this process can be achieved in a much easier way than the regular satisfaction check in which the finite trace can have an arbitrary length.
+
+\begin{theorem}\label{thm:oneSat}
+Given a finite trace $\eta \in \Sigma^{+}$ with $|\eta|=1$, and an \ltlf formula $\phi$, it is true that $\eta \models \phi$ holds iff
 \begin{itemize}
-	\item $\eta \models \tt$ and $\eta \not \models \ff$;
-	\item If $\phi=p$ is a literal, then return true if $p \in \eta$, otherwise return false;
-	\item If $\phi=\X \psi$, then return false;
-	\item If $\phi=\N \psi,$ then return true;
-	\item If $\phi=\phi_{1} \U \phi_{2}$ or  $\phi=\phi_{1} \R \phi_{2}$, then return  $\eta \models \phi_{2}$;
-	\item If $\phi=\phi_{1} \wedge \phi_{2},$ then return $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$;
-	\item If $\phi=\phi_{1} \vee \phi_{2},$ then return $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.
+	\item $\phi$ is $\tt$; or 
+	\item $\phi \in\eta$ when $\phi$ is a literal; or
+	%\item If $\phi=\X \psi$, then return false;
+	\item $\phi=\N \psi$ is a weak Next formula; or
+	\item $\eta \models \phi_{2}$ holds when $\phi=\phi_{1} \U \phi_{2}$ is an Until formula; or  
+	\item $\eta \models \phi_{2}$ holds when $\phi=\phi_{1} \R \phi_{2}$ is a Release formula; or
+	\item $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$ hold when $\phi=\phi_{1} \wedge \phi_{2}$; or
+	\item $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$ holds when $\phi=\phi_{1} \vee \phi_{2}$.
 \end{itemize}
-\end{lemma}
-
-\begin{proof}
-The lemma is self-evident which can be derived from the semantics of \ltlf.
-\end{proof}
-
-Now we characterize the satisfaction relation for finite sequences whose lengths are greater than 1.
-
-\begin{lemma}\label{lem:finiteSat}
-For a finite trace $\eta = \omega_0\omega_1\ldots \omega_n \in \Sigma^{+}$ and \ltlf formula $\phi$, $\eta \models \phi$ holds iff there exists a run $r = \phi \overset{\alpha_0}{\rightarrow}\phi_1\overset{\alpha_1}{\rightarrow}\phi_2...\overset{\alpha_n}{\rightarrow}\phi_{n+1}$ in the \NFA $\A_{\phi}$ s.t. $\omega_i \models \alpha_i$ and $\eta_i \models \phi_i $ holds for every $0 \leq i \leq n$.
-\end{lemma}
-\begin{proof}
-The Lemma above can be proved by recursively applying the first item if $n = 0$, and the second item if $n \geq 1$. 
-\begin{enumerate}
-	\item If $n = 0$, $\eta \models \phi$ holds iff there exists $\alpha \wedge \X\phi \in \xnf(\phi)$ or $\alpha_i \wedge \X(\tt) \in \xnf(\phi)$ s.t. $\omega_0 \models \alpha$ and $\alpha \models \phi$;
-	\begin{itemize}
-		\item If $\phi = p$, then $\eta \models \phi$ iff $w_0 \models$ p, and p $\models \phi$ hold. According to Definition 2, $p \wedge \X(tt) \in xnf(p)$;
-		\item If $\phi=\X \psi$, according to Lemma 1, $\eta \models \X \psi$ is always false. Similiarly, If $\phi=\N \psi$, $\eta \models \N \psi$ is always true;
-		\item If $\phi=\phi_{1} \U \phi_{2}$, according to Lemma 1, $\eta \models \phi$ iff $\eta \models \phi_{2}$. $xnf(\phi_{2})=\phi_{2} \wedge \X(tt)$, then  $w_0 \models \phi_{2}$, and $\phi_{2} \models \phi_{2}$, thus the proof is done. The proof for the case $\phi=\phi_{1} \R \phi_{2}$ is similar;
-		\item If $\phi=\phi_{1} \wedge \phi_{2}$, according to Definition 3, there exists $\beta_i \wedge \X\psi_i \in xnf(\phi)(i = 1,2).$ Let $\alpha = \beta_1 \wedge \beta_2$ and $\psi = \phi_1 \wedge \phi_2$, then $w_0 \models \alpha$ and $\alpha \models \phi$ hold. Similarly, the proof for the case when $\phi = \phi_1 \vee \phi_2$ is the same.
-	\end{itemize}
-	\item  If $n \geq 1$, $\eta \models \phi$ holds iff there exists $\alpha_i \wedge \X\phi_i \in \xnf(\phi)$ s.t. $\omega_0 \models \alpha_i$ and $\eta_1 \models \phi_i$.
-	\begin{itemize}
-		\item If $\phi_i = p$, then $\eta \models \phi$ iff $w_0 \models \phi$, and $\eta_1 \models tt$, according to Definition 2, $xnf(p)=p \wedge \X(tt)$, then proof is done.\\
- 		\item If $\phi_i=\X \psi$ or $\eta \models \N \psi$, then $\eta \models \phi$ iff $w_0 \models tt$ and $\eta_1 \models \psi$. According to Lemma 1, $tt \wedge \X\phi_2 \in xnf(\phi)$.\\
-		\item If $\phi=\phi_1 \wedge \phi_2$, then $\eta \models \phi_1 \U \phi_2$ iff $\eta \models \phi_1$ and $\eta \models \phi_2$, and iff there exists $\beta_i \wedge \X\psi_i \in xnf(\phi_i)(i=1,2)$ s.t. $w_0 \models \beta_1 \wedge \beta_2$ and $\eta_1 \models \psi_1 and \psi_2$. According to Definition ,$(\beta_1 \wedge \beta_2)\wedge \X(\psi_1 and \psi_2)$. The proof for the case when $\phi_i=\psi_{1} \vee \psi_{2}$ is similar. \\
- 		\item If $\phi_i=\phi_{1} \U \phi_{2}$, then $\eta \models \phi$ iff $\eta \models \phi_2$ or $\eta \models (\phi_1 \wedge \X\phi)$. If $\eta \models \phi_2$ holds, then $\eta \models \phi$ iff there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. According to Definition , there exists $\alpha_i \wedge \X\phi_i \in xnf(\phi_2)$. On the other hand, if $\eta \models (\phi_1 \wedge \X\phi)$ holds, the proof for the case when the operator is $\wedge$ is done. So $\eta \models \phi$ iff there exists $\alpha_i \wedge \phi_i \in xnf(\phi_2)$ s.t. $w_0 \models \alpha_i$ and $\eta_1 \models \phi_i$. The proof the case when $\phi=\phi_1 \R \phi_2$ is similar.
-	\end{itemize}
-\end{enumerate}
-
-\end{proof}
-
-Lemma \ref{lem:finiteSat} denotes that, to check whether a finite trace $\eta = \omega_0 \omega_1\ldots \omega_n$ satisfies an \ltlf formula $\phi$, iff we can find a trace of an \NFA $\A_\phi$ s.t. $\eta$ can finally reach an accepting state. Now we show the main theorem of this paper.
-
-\begin{theorem}[Main Theorem]  
-For a finite trace  $\eta = \omega_0\omega_1\ldots \omega_n $ and \ltlf formula $\phi$, $\eta \models \phi$ iff $\eta$ can be accepted by the \NFA $\A_\phi$.
 \end{theorem}
+
+\begin{proof}
+The lemma is self-explained which can be derived from the semantics of \ltlf.
+\end{proof}
+
+We present the following theorem to guarantee the correctness of our construction. 
+
+\begin{theorem}\label{thm:ltlf2nfa}
+Given an \ltlf formula $\phi$ and the \TNFA ${\A_{\phi}}^{tn}$ constructed by Definition \ref{def:ltlf2nfa}, a finite trace $\eta\models\phi$ holds iff $\eta$ is accepted by ${\A_{\phi}}^{tn}$. 
+\end{theorem}
+\begin{proof}
+Assume $\eta = \omega_0\omega_1\ldots\omega_n$ ($n\geq 0$). 
+
+($\Leftarrow$) We prove by induction over the values of $n$.
+\begin{itemize}
+	\item According to Definition \ref{def:ltlf2nfa}, $\eta$ is accepted by ${\A_{\phi}}^{tn}$ implies that there is a run $r=s_0s_1\ldots s_n s_{n+1}$ of ${\A_{\phi}}^{tn}$ on $\eta$ such that $\omega_n\models s_{n}$. So basically when $k = n$, it holds that $\eta_k\models s_k$;
+	\item Inductively, assume $\eta_k\models s_k$ holds for $0<k\leq n$. Because $s_{k-1}\tran{\omega_{k-1}}s_k$ is a transition in the \TNFA and $\eta_k\models s_k$ holds, the set $A_{k-1} = \omega_{k-1}\cup \{\X\theta | \theta\in s_k\}$ is a satisfying assignment of $\xnf(s_{k-1})^p$, from Definition \ref{def:ltlf2nfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{k-1}=\omega_{k-1}\cdot\eta_k$ is true, we have that $\eta_{k-1}\models s_{k-1}$.
+\end{itemize}
+When $k=0$, we prove that $\eta (=\eta_0)\models \phi (=s_0)$ is true.
+
+($\Rightarrow$) We first prove that $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$. 
+If $n = 0$, Corollary \ref{coro:propSat} shows that there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\eta[0]\models L(A)$. From Definition \ref{def:ltlf2nfa}, $\phi\tran{\eta[0]}X(A)$ is a transition of the \TNFA. As a result, there is a run $r=s_0(=\phi)s_1(=X(A))$ of ${\A_{\phi}}^{tn}$ on $\eta$.
+ 
+If $n>0$, according to Lemma \ref{lem:propSat}, $\eta\models\phi$ implies there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\omega_0\models L(A)$ and $\eta_1\models X(A)$. From Definition \ref{def:ltlf2nfa}, $\phi (=s_0)\tran{\omega_0}X(A) (=s_1)$ is a transition in the \TNFA. Recursively applying the above process to $\eta_i\models s_i(i\geq 1)$, one can prove there is a transition $s_i\tran{\omega_i}s_{i+1}$ in the \TNFA. As a result, we have $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$.  
+
+Now we prove that the run $r$ is an accepting run. If $n=0$, the run $r$ is $s_0s_1$ such that $\eta[0]\models s_0(=\phi)$ holds. According to Definition \ref{def:ltlf2nfa}, the transition $s_0\tran{\eta[0]}s_1$ is an accepting transition. As a result, $r$ is an accepting run and $\eta$ is accepted by ${\A_{\phi}}^{tn}$.
+
+If $n>0$, we can also prove that for the run $r=s_0s_1\ldots s_n s_{n+1}$, $s_n\tran{\omega_n}s_{n+1}$ is an accepting transition, due to the fact that $\omega_n\models s_n$. The proof is done.
+\end{proof}
+
+We discuss the upper bound of the generated \TNFA in the following theorem.
+
+\begin{theorem}\label{thm:tnfaBound}
+For an \ltlf formula $\phi$, the size of the corresponding $\TNFA$ ${\A_{\phi}}^{tn}$ generated by Definition \ref{def:ltlf2nfa} is at most $2^{|cl(\phi)|}$.
+\end{theorem}
+\begin{proof}
+	The proof is straightforward as every state in ${\A_{\phi}}^{tn}$ is from $s^{cl(\phi)}$, according to Definition \ref{def:ltlf2nfa}.
+\end{proof}
+
+We have shown the construction from an \ltlf formula to its equivalent \TNFA. The following theorem indicates that there is a trivial way to convert a \TNFA to its equivalent \NFA. 
+
+\begin{theorem}\label{tnfa2nfa}
+For a \TNFA $\A^{tn}$, there is a \NFA $\A^n$ such that $\eta$ is accepted by $\A^{tn}$ iff $\eta$ is accepted by $\A^n$, for $\eta\in \Sigma^+$. 
+\end{theorem}
+\begin{proof}
+Assume $\A^{tn}=(\Sigma, S, \rho, s_0, T)$ and one can construct the \NFA $\A^{n} = (\Sigma, S', \rho', s_0, F)$ such that 
+\begin{itemize}
+	\item $S' = S\cup \{f\}$ where $f$ is a new and the only accepting state in $\A^n$; and 
+	\item the transition function $\rho'$ satisfies $s_2\in \rho'(s_1,\omega)$ holds iff $s_2\in \rho(s_1, \omega)$ holds when $s_2\not = f$; otherwise, there is a transition $s_1\tran{\omega}s_3$ in $T$. 
+	\item $F=\{f\}$.
+\end{itemize}
+We consider as follows to prove the equivalence of $\A^{tn}$ and $\A^n$: On one hand, every accepting run of $\A^{tn}$ which ends with an accepting transition in $T$ can also be an accepting run of $\A^n$ which ends with the accepting state $f$. On the other hand, every accepting run of $\A^{n}$ which ends with the accepting state $f$ can also be an accepting run of $\A^{tn}$ which ends with an accepting transition in $T$.
+\end{proof}
 
 
 

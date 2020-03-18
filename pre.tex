@@ -34,9 +34,11 @@ Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A 
 \begin{theorem}[\cite{GV13}]
 Given an \ltlf formula $\phi$, there is an nondeterministic finite automaton $\A$ such that $\eta\models\phi$ iff $\eta$ is accepted by $\A$, for a finite trace $\eta\in\Sigma^+$.
 \end{theorem}
+\iffalse
 \begin{proof} 
 ($\Leftarrow$) If $\eta$ can be accepted by the \NFA $\A_{\phi}$, there exists a finite trace $\eta$ s.t. the corresponding run $r$ of $\A_{\phi}$ on $\eta$ ends with an accepting state $\phi_n$. According to Definition \ref{def:ltlf2nfa}, $\eta \models \phi$. 
 
 ($\Rightarrow$) Since $\eta$ is a finite trace, $\eta \models \phi$. According to Lemma \ref{lem:finiteSat}, there is a run $r= \phi_0 \to \phi_1 \to ...\phi_n$ such that $\phi_n$ is an accepting state. According to Definition \ref{def:ltlf2nfa}, $\eta$ can be accepted by the \NFA $\A_{\phi}$.
 \end{proof}
+\fi
 
