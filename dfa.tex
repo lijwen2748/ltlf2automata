@@ -28,7 +28,11 @@ Assume ${\A_{\phi}}^{tn}$ is the \TNFA constructed by Definition \ref{def:ltlf2n
 
 Assume $\eta = \omega_0\omega_1\ldots\omega_n$ ($n\geq 0$). 
 
-($\Leftarrow$) We prove by induction over the values of $n$.
+($\Leftarrow$) 
+According to Definition \ref{def:ltlf2dfa}, $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $\omega_n\models s$ for some $s\in q_n$.
+To prove $\eta\models\phi\Leftarrow\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}$, we only need to prove $\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}\Rightarrow\ for\ i=0,...,n,\eta_{n-i}\models$
+
+We prove by induction over the values of $n$.
 \begin{itemize}
 	\item According to Definition \ref{def:ltlf2dfa}, $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $\omega_n\models s$ for some $s\in q_n$. Since $q_n = \bigvee_{s\in q_n}\bigwedge_{\psi\in s}\psi$, it is true that $s\implies q_n$ for every $s\in q_n$. So $\omega_n\models s$ implies $\omega_n\models q_n$, which means basically when $k = n$, it holds that $\eta_k\models q_k$;
 	\item Inductively, assume $\eta_k\models q_k$ holds by satisfying $\eta_k\models s$ for some $s\in q_k$ ($0<k\leq n$). Because $q_{k-1}\tran{\omega_{k-1}}q_k$ is a transition in the \TDFA and $\eta_k\models q_k$ holds, the set $A_{k-1} = \omega_{k-1}\cup \{\X\theta | \theta\in s\}$ is a satisfying assignment of $\xnf(q_{k-1})^p$ in $\allsat(\xnf(q_{k-1})^p)_{|\omega_{k-1}}$, from Definition \ref{def:ltlf2dfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{k-1}=\omega_{k-1}\cdot\eta_k$ is true, we have that $\eta_{k-1}\models q_{k-1}$.
