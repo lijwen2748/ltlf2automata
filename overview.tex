@@ -13,7 +13,9 @@ Given an \ltlf formula $\phi$, the high-level descriptions on how to generate th
 
 Taking $\xnf(\phi)^p$ as the input, an \SAT solver is able to compute a satisfying assignment $A$, e.g., $A=\{\neg a, b, \X(a\R b)\}$. The information inside $A$ indicates that there is a transition from $\phi$ to itself with the label $\neg a\wedge b$. Analogously, the assignment $A=\{a, b, \neg \X(a\R b)\}$ tells that there is a transition from $\phi$ to $\tt$ (because there is no $\X$ element in $A$) with the label $a\wedge b$. Now $\tt$ is a new state and we continue the above process to create new transitions until no new state is generated. Finally we identify the accepting transitions, the details of which are shown below. 
 
-%Constructing the equivalent \DFA from an \ltlf formula is similarly to that for \NFA. 
+Constructing the equivalent \DFA from an \ltlf formula is similarly to that for \NFA. We can also utilize the \SAT techniques to obtain a transition-based \DFA (\TDFA) directly from the input formula. The idea to generate deterministic transitions are as follows. For the given state $q$, which essentially is a set of set of subformulas of the input formula and can be considered as a formula as well, we use the \SAT solver to get one of the satisfying assignment $A$ of $\xnf(q)^p$ at first. From $A$ we can fix the label, denoted as $L(A)$, on the transition and then enumerate all satisfying assignments of $q$ that includes $L(A)$. After that, we create a transition starting from $q$ with the label $L(A)$. Recursively applying the above procedure, all the states of the $\TDFA$ can be constructed. Finally, we present a methodology to identify the accepting transitions on the generated automaton, whose details are as below. 
+
+From the \TDFA we can easily construct the equivalent \NFA, from which one can use the Subset Construction to create the corresponding \DFA.
 
 
 

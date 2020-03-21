@@ -1,4 +1,5 @@
 \section{Preliminaries}
+This section introduces the basic concepts w.r.t the linear temporal logic over finite traces (\ltlf) and finite automata. 
 \subsection{LTL over finite Traces (\ltlf)}
 Classical \ltl formulas are interpreted over infinite traces, which are widely used as the formal property languages to describe system behaviors. Meanwhile, the formulas of \ltlf, which is a variant of \ltl, are interpreted over finite traces. \ltlf are so far widely used in the AI community to describe finite system bahaviors. Given a set $P$ of atomic propositions, the syntax of an \ltlf formula $\phi$ is shown as below.
 
@@ -6,7 +7,7 @@ Classical \ltl formulas are interpreted over infinite traces, which are widely u
 $\phi:=\tt\ |\ \ff\ |\ p\ |\neg\phi\ |\ \phi \vee \phi\ |\ \phi \wedge \phi\ |\ \X \phi\ |\ \N \phi\ |\ \phi \U \phi\ |\ \phi \R \phi$ 
 \end{center}
 
-In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N \phi$ (weak Next), $\U$ (Until), and $\R$ (Release) are temporal operators. We say $\phi$ is a \emph{literal} if $\phi$ is a proposition or the negation of a proposition. $\X$ and $\N$ (resp. $\U$ and $\R$) are dual operators, i.e. $\X\phi\equiv \neg(\N\neg\phi)$ (resp. $\phi_1\U\phi_2 \equiv \neg (\neg\phi_1 \R\neg\phi_2)$) is semantically true. Boolean operators such as $\rightarrow$ and $\leftrightarrow$ can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant \textsf{true} as \tt and \textsf{false} as \ff. We use the particular notation $\F$ (Future) (resp. $\G$ (Global)) for $\U$ (resp. $\R$) such that $\F\phi \equiv \tt\U\phi$ (resp. $\G\phi \equiv \ff \R\phi$) is semantically true. Moreover, we use $\cf(\phi)$ to denote the set of conjuncts in $\phi$, i.e., $\cf{\phi} = \{\phi_i | 1\leq i\leq n\}$ for $\phi = \bigwedge_{1\leq i\leq n}\phi_i$. Notably, the root of these conjuncts is not a conjunction. Let $\Sigma = 2^P$ be the set of alphabet and $\eta\in\Sigma^+$ is a finite trace defined over $\Sigma$. We use $\eta[i]$ to denote the $i$-th element of $\eta$, use $\eta_i$ to denote the suffix of $\eta$ starting from position $i$ (including $i$), and use $|\eta|$ to denote the length of $\eta$. Then the semantics of \ltlf formulas are interpreted as follows.
+In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N \phi$ (weak Next), $\U$ (Until), and $\R$ (Release) are temporal operators. We say $\phi$ is a \emph{literal} if $\phi$ is a proposition or the negation of a proposition. $\X$ and $\N$ (resp. $\U$ and $\R$) are dual operators, i.e. $\X\phi\equiv \neg(\N\neg\phi)$ (resp. $\phi_1\U\phi_2 \equiv \neg (\neg\phi_1 \R\neg\phi_2)$) is semantically true. Boolean operators such as $\rightarrow$ and $\leftrightarrow$ can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant \textsf{true} as \tt and \textsf{false} as \ff. We use the particular notation $\F$ (Future) (resp. $\G$ (Global)) for $\U$ (resp. $\R$) such that $\F\phi \equiv \tt\U\phi$ (resp. $\G\phi \equiv \ff \R\phi$) is semantically true. Let $\Sigma = 2^P$ be the set of alphabet and $\eta\in\Sigma^+$ is a finite trace defined over $\Sigma$. We use $\eta[i]$ to denote the $i$-th element of $\eta$, use $\eta_i$ to denote the suffix of $\eta$ starting from position $i$ (including $i$), and use $|\eta|$ to denote the length of $\eta$. Then the semantics of \ltlf formulas are interpreted as follows.
 \begin{itemize}
 \item  $\eta \models \tt$ and $\eta \not\models \ff$;
 \item  If $\phi = p$ is a literal, $\eta \models \phi$ iff $p \in \eta[0]$;
@@ -18,21 +19,23 @@ In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N \phi$ (
 \item  If $\phi=\phi_{1} \vee \phi_{2}$, $\eta \models \phi$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.
 \end{itemize}
 
-In the rest of the paper, all \ltlf formulas are considered in the \emph{Negated Normal Form} (NNF), i.e., every negation appears only in front of an atom. 
+We use $\cl(\phi)$ to denote the set of subformulas of $\phi$ \cite{}, whose formal definition are as follows: (1) $\phi\in\cl(\phi)$; (2) if $op (\psi)\in\cl(\psi)$, so does $\psi\in\cl(\psi)$, where $op$ is $\X,\N,\neg,\F$ or $\G$; (3) if $\psi_1\ op\ \psi_2\in\cl(\phi)$, so does $\psi_1\in\cl(\phi)$ and $\psi_2\in\cl(\phi)$, where $op$ is $\U,\R,\wedge$ or $\vee$. In the rest of the paper, all \ltlf formulas are considered in the \emph{Negated Normal Form} (\NNF), i.e., every negation appears only in front of an atom. It is not hard to see that every \ltlf formula can be converted to the equivalent \NNF, and the conversion cost is linear to the size of the formula.
 
 \subsection{Finite Automata}
-\noindent A finite automaton $\A$ is a tuple $(\Sigma, S, \rho, s_0, F)$ where 
+\noindent A finite automaton $\A$ is a tuple $(\Sigma, S, \rho, s_0, \Omega)$ where 
 \begin{itemize}
 	\item $\Sigma$ is the set of alphabet;
 	\item $S$ is the set of states;
 	\item $\rho: S\times\Sigma \rightarrow 2^S$ is the transition function. We say $(s_1,\omega, s_2)$ is a \emph{transition} iff $s_2\in\rho(s_1,\omega)$;
 	\item $s_0\in S$ is the initial state;
-	\item $F\subseteq S$ is the set of accepting states. 
+	\item $\Omega$ is the accepting conditions. We call $\A$ is a state-based (resp. transition-based) automaton if $\Omega\subseteq S$ (resp. $\Omega\subseteq \rho$) is the set of accepting states (resp. accepting transitions).
 \end{itemize}
-Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A run $r$ of $\A$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. We say $\eta$ is accepted by $\A$ iff there is a run $r$ of $\A$ on $\eta$ which ends with some accepting state in $F$. $\A$ is called deterministic iff $|\rho(s,\omega)| \leq 1$ for every $s\in S$ and $\omega\in\Sigma$; otherwise, $\A$ is nondeterministic.   
+Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A run $r$ of $\A$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. We say $\eta$ is accepted by $\A$ iff there is a run $r$ of $\A$ on $\eta$ such that $r$ ends with some accepting condition in $\Omega$. $\A$ is called deterministic iff $|\rho(s,\omega)| \leq 1$ for every $s\in S$ and $\omega\in\Sigma$; otherwise, $\A$ is nondeterministic. 
+
+We consider two different finite automata, i.e., the state-based and transition-based, which vary according to the accepting conditions. In the rest of the paper, a finite automaton is state-based if it is not stated explicitly.  
 
 \begin{theorem}[\cite{GV13}]
-Given an \ltlf formula $\phi$, there is an nondeterministic finite automaton $\A$ such that $\eta\models\phi$ iff $\eta$ is accepted by $\A$, for a finite trace $\eta\in\Sigma^+$.
+Given an \ltlf formula $\phi$, there is a nondeterministic finite automaton $\A$ such that $\eta\models\phi$ iff $\eta$ is accepted by $\A$, for a finite trace $\eta\in\Sigma^+$.
 \end{theorem}
 \iffalse
 \begin{proof} 
