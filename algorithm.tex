@@ -1,16 +1,16 @@
 \section{Approach Overview}
-Given an $LTL_f$ formula $\phi$, there is a NFA $A_{\phi}$ which accepts exactly the same language as $\phi$. To construct the nondeterministic finite automaton (NFA) for an $ LTL_f$ formula $\phi$, we leverage SAT solvers to find all one-transition next states of the current state, then check the accepting states. 
+Given an $LTL_f$ formula $\phi$, there is a \NFA $A_{\phi}$ which accepts exactly the same language as $\phi$. To construct the nondeterministic finite automaton (\NFA) for an $ LTL_f$ formula $\phi$, our approach first constructs the corresponding transition-based \NFA, then converts the \TNFA to its equivalent \NFA. The following two subsections will describe this process. The first subsection describes the algorithm of \ltlf-to-\TNFA. The second subsection describes the algorithm of \TNFA-to-\NFA.
 
-\subsection{LTL to \NFA}
-Given an  $ LTL_f$ formula, We define the construction of the \NFA  as follows: \\
+\subsection{\ltlf-to-\TNFA}
+Given an  $ LTL_f$ formula, We define the construction of the \TNFA  as follows: \\
   \begin{algorithm}[H]
     \SetAlgoNoLine
  \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
  \Input{ An $ LTL_f$ formula $\phi$\\}
-    \Output{ NFA $A_{\phi}$\\}
+    \Output{ TNFA $A^{tn}$\\}
     \BlankLine
  $to\_process:= \{\xnf(\phi)\}$\\
- $xnf(\phi)$ is the initial state in $A_{\phi}$\\
+ $xnf(\phi)$ is the initial state in S\\
 \textbf{while} $to\_process$ is not empty \textbf{do} \\
 \ cur =  $to\_process$.front;  \\
 \quad  \textbf{while} true \textbf{do} \\
@@ -21,37 +21,34 @@ Given an  $ LTL_f$ formula, We define the construction of the \NFA  as follows: 
 \qquad\textbf{if} next is not in existing \textbf{then} \{ \\
 \qquad \quad $to\_process$.push($next$); \\
 \qquad \quad existing.push($next$); \\
-\qquad  \quad add the state $next$ to $A_{\phi}$\}\\
-\qquad  add the transition $cur\tran{label}next$ to $A_{\phi}$
- \caption{Construction of the \NFA}
+\qquad  \quad add the state $next$ to S\\
+\qquad  add the transition $cur\tran{label}next$ to T
+ \caption{Construction of the \TNFA}
 \end{algorithm}
 
 The algorithm constructs the transition system on-the-fly. The initial state is set to be $\{\phi\}$, which is the input formula. $to\_process$ is used to store a collection of states to be processed. Visited states are stored in $existing$. $front$ is used to describe the first element of an array. In a transition $s_1\tran{\omega}s_2$, $\omega$ is the $label$, $s_2$ is the $next$ state. \\
 In this algorithm, we first convert the input formula into its Next Normal Form, i.e., $\xnf(\phi)$. Then we use \SAT solvers to check if $\xnf(\phi)$ is satisfiable. If the answer is true, proceed to the next step, and if the answer is false, stop. After that, we leverage $\SAT solvers$ to get a transition $cur\tran{label}next$, and then we check if the state $next$ has been processed. If the answer is true, then we add the transition to ${A_{\phi}}^{tn}$, otherwise, the state $next$ will be added to  $to\_process$,existing and ${A_{\phi}}^{tn}$ respectively.
 
 
-\subsection{Checking Accepting States}  
-In the previous section, we constructed the state and transition of the automaton without checking the accepting state.This section mainly deals with the determination of accepting states. \\
-To check whether a state is an accepting state, we can  discuss it in following two steps: \\
-1. If $s_1 $= tt, return true; \\
-2. If there exists a transition  $ s_1 \overset{\alpha}{\rightarrow}s_1$ and  the properties on the edge satisfy the current state, then return true. \\
+\subsection{\TNFA-to-\NFA}  
+In the previous section, we constructed the state and transition of the \TNFA. This section will focus on the conversion from \TNFA-to-\NFA, with the addition of accepting states. The algorithm is stated as follows:\\
 
 \IncMargin{1em}
  \begin{algorithm}[H]
     \SetAlgoNoLine
  \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
- \Input{ An $ LTL_f$ formula $\phi$\\}
-    \Output{  accepting states Accept}
+ \Input{ \TNFA $A^{tn}$\\}
+    \Output{  \NFA $A^{n}$}
     \BlankLine
-\textbf{for} i $\leftarrow$  0 to S.size  \\
-\qquad cur = S[i].property;  \\
-\qquad  \textbf{if} cur is 'true'   \textbf{then}\{      \\
-\qquad \quad Accept.push\_back(i);     \\
-\qquad \quad  continue;  \}     \\
-\qquad  $ \textbf{for}$ j $\leftarrow$  0 to S[i].trans\_set.size \\
-\qquad \quad state\_next = S[i].trans\_set[j].next;  \\
-\qquad \quad \textbf{if} state\_next == i and S[i].trans\_set[j].label satisfies current state \textbf{then} \{  \\
-\qquad \qquad Accept.push\_back(i);  \\
-\qquad \qquad \textbf{break}; \} \\
- \caption{Checking accepting States}
+ 
+\qquad  $S' = S\cup \{f\}$   \\
+\qquad  \textbf{for} state $s_2$ in S \\
+\qquad \quad \textbf{if} $s_2\not = f$ and $s_2\in \rho(s_1, \omega)$\textbf{then} \{  \\
+\qquad \qquad  $\rho'(s_1,\omega)$ = $\rho(s_1, \omega)$ \} \\
+\qquad \quad \textbf{else} \{  \\
+\qquad \qquad add a transition $s_1\tran{\omega}s_3$ in $\rho'$
+\} \\
+ \caption{\TNFA-to-\NFA}
 \end{algorithm}
+
+This algorithm converts the \TNFA to \NFA. S is the set of states in \TNFA, while $S'$ is the set of states in \NFA. f is the only accepting state in \NFA $A^{n}$. \\
