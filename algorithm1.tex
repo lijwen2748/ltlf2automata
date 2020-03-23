@@ -1,4 +1,4 @@
-\section{Approach Overview}
+\section{Implementation}\label{sec:algorithm}
 Given an $LTL_f$ formula $\phi$, there is a \NFA $A_{\phi}$ which accepts exactly the same language as $\phi$. To construct the nondeterministic finite automaton (\NFA) for an $ LTL_f$ formula $\phi$, our approach first constructs the corresponding transition-based \NFA, then converts the \TNFA to its equivalent \NFA. The following two subsections will describe this process. The first subsection describes the algorithm of \ltlf-to-\TNFA. The second subsection describes the algorithm of \TNFA-to-\NFA.
 
 \subsection{\ltlf-to-\TNFA}

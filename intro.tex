@@ -4,7 +4,25 @@ Linear Temporal Logic (\ltl) was first introduced into Computer Science in 1977~
 
 Recently, \ltlf, a variant of \ltl whose semantics are interpreted over finite traces, has raised great interests from the AI community \cite{GV13,GV15}. Researches on \ltlf satisfiability checking \cite{LZPVH14,LRPZV19} and \ltlf synthesis \cite{GV15} have been extensively investigated. To solve these problems, the crux is to translate the \ltlf formula to its equivalent finite automaton. Constructing the \NFA is sufficient for the satisfiability checking, while constructing the \DFA is required for \ltlf synthesis. This paper focus on the \NFA and \DFA generation from a given \ltlf formula. 
 
-It is well-known that every \ltl formula, which is interpreted over infinite semantics, has a equivalent B\"uchi automata such that they accept the same languages \cite{GPVW95}. 
+It is well-known that every \ltl formula, which is interpreted over infinite semantics, has an equivalent B\"uchi automata such that they accept the same languages \cite{GPVW95}. Analogously, for each \ltlf formula interpreted over finite semantics, there is an equivalent \NFA (or \DFA) such that they accept the same languages \cite{GV15}. Currently, such finite automata are mainly obtained from \spot \cite{DP04} or \mona \cite{HJJKPRS95,EKM98}, in an indirectly way. \spot is the state-of-the-art \ltl-to-B\"uchi translator, so to construct the finite \NFA of the input \ltlf formula one has to first convert the \ltlf formula to its equi-satisfiable \ltl formula, generate the B\"uchi automaton and then convert the B\"uchi automaton to the \NFA\footnote{Details see \url{https://spot.lrde.epita.fr/tut12.html}.}. \mona is a tool that can translate monadic first-order logic \cite{Tra62} to the equivalent minimal \DFA. So one can also convert first the \ltlf formula to its equivalent monadic first-order logic and then utilizes \mona to obtain the minimal \DFA \cite{}. Both \spot and \mona utilize \BDD techniques to keep the generated automata small. 
+
+However, constructing the \NFA/\DFA via \spot or \mona for \ltlf formulas is not only inconvenient but also inefficient. For \ltlf satisfiability checking, it may be too late to do the checking after the whole \NFA is generated, since in theory the complexity of \ltlf-to-\NFA translation is exponential. It is even worse for \ltlf synthesis, whose solutions rely on the generated \DFA that involves a double-exponential complexity. In fact, both the \ltlf satisfiability checking and \ltlf synthesis should benefit from the on-the-fly \ltlf-to-\DFA translation, which construct the necessary part of automata for the purpose \cite{GPVW95}.  
+
+Inspired from the above motivation, we present in this paper the first on-the-fly construction from a given \ltlf formula to the equivalent transition-based \NFA (\TNFA) and transition-based \DFA (\TDFA). \TNFA (resp. \TDFA) is a variant of \NFA (resp. \DFA) whose accepting conditions are defined over transitions instead of states. The key point why our algorithm is able to conduct an on-the-fly construction is because it is based on the modern \SAT techniques for state and transition computation. Furthermore, our constructions are direct from \ltlf to the resulting automata without any intermediate steps. To convert a \TNFA to the equivalent \NFA, we show that there is a simple way which requires to add only one single state. In terms of converting a \TDFA to the equivalent \DFA, we propose to first obtain the equivalent \NFA by applying the \TNFA-to-\NFA approach and then use the standard Subset Construction \cite{RS59} to generate the corresponding \DFA.   
+
+Despite the inconvenience of converting the \TDFA to the corresponding \DFA, we consider \TDFA is a better data structure to achieve \ltlf synthesis rather than the state-based \DFA. On one hand, both the \ltl model checking and \ltl satisfiability checking results affirm the superiority of the transition-based (B\"uchi) automata over the state-based ones \cite{GL02}. On the other hand, \TDFA is designated for on-the-fly construction, thus should be potentially better for the synthesis on the fly. 
+
+In summary, the contributions of this paper are as follows.
+\begin{itemize}
+	\item We present the first direct construction from \ltlf formulas to \TNFA and \TDFA without any intermediate steps;
+	\item The proposed construction leverages the modern \SAT techniques such that the automata can be generated on the fly;
+	\item Although there is already transition-based B\"uchi automata, this paper is the first to present the concept of transition-based finite automata, to the best of our knowledge.
+\end{itemize}
+
+The rest of the paper are organized as follows. Section \ref{sec:pre} introduces the preliminaries, Section \ref{sec:overview} introduces the overview of our approach in a high-level way. Then Section \ref{sec:main} presents our formal construction from \ltlf to the corresponding finite automata, Section \ref{sec:algorithm} presents the implementation details of our algorithms. Finally, Section \ref{sec:discuss} discusses and concludes the paper.  
+
+
+
 
 
 
