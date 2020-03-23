@@ -1,3 +1,13 @@
 \section{Introduction}
 
-While LTL is defined on infinite traces, $LTL_f$ is interpreted over finite traces. Due to their different characteristics, they are also applied in different fields. While LTL is applied to areas that require constant computation, such as formal-verification, $LTL_f$ is used as a specification language to describe finite behaviors in areas such as automatic synthesis of software.
+Linear Temporal Logic (\ltl) was first introduced into Computer Science in 1977~\cite{Pnu77}, since when it has been widely used in formal verification like model checking ~\cite{CGD99}, runtime verification~\cite{BLS11} and property synthesis~\cite{JGWB07,BFJ12}. Beyond that, \ltl also receives a lot of interests from other research communities such as software engineering~\cite{BKMR15} and artificial intelligence~\cite{BK98}. The standard \ltl formulas are interpreted over infinite (linear) traces, which are suitable for describing non-terminating systems' infinite behaviors. Meanwhile, AI applications like motion planning \cite{BK98,DV99,CDV02,PLGG11,CBMM17}, plan constraints \cite{BK00,Gab04} and user preferences \cite{BFM06,BFM11,SBM11}, make more concern on the systems' finite behaviors. 
+
+Recently, \ltlf, a variant of \ltl whose semantics are interpreted over finite traces, has raised great interests from the AI community \cite{GV13,GV15}. Researches on \ltlf satisfiability checking \cite{LZPVH14,LRPZV19} and \ltlf synthesis \cite{GV15} have been extensively investigated. To solve these problems, the crux is to translate the \ltlf formula to its equivalent finite automaton. Constructing the \NFA is sufficient for the satisfiability checking, while constructing the \DFA is required for \ltlf synthesis. This paper focus on the \NFA and \DFA generation from a given \ltlf formula. 
+
+It is well-known that every \ltl formula, which is interpreted over infinite semantics, has a equivalent B\"uchi automata such that they accept the same languages \cite{GPVW95}. 
+
+
+
+
+
+
