@@ -29,24 +29,21 @@ Assume ${\A_{\phi}}^{tn}$ is the \TNFA constructed by Definition \ref{def:ltlf2n
 Assume $\eta = \omega_0\omega_1\ldots\omega_n$ ($n\geq 0$). 
 
 ($\Leftarrow$) 
-According to Definition \ref{def:ltlf2dfa}, $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $\omega_n\models s$ for some $s\in q_n$.
-To prove $\eta\models\phi\Leftarrow\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}$, we only need to prove $\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}\Rightarrow\ for\ i=0,...,n,\eta_{n-i}\models$
+According to Definition \ref{def:ltlf2dfa},  $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $q_{k-1}\tran{\omega_{k-1}}q_k \in \delta$ and $\omega_n\models s$ for some $s\in q_n$.
+To prove $\eta\models\phi\Leftarrow\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}$, we only need to prove $\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}\Rightarrow\ for\ i=0...n,\eta_{n-i}\models q_{n-i}$. Then we could have $\eta (=\eta_0)\models \phi (=q_0)$ when $i=n$.
 
-We prove by induction over the values of $n$.
+We prove by induction over the values of $i$.
 \begin{itemize}
-	\item According to Definition \ref{def:ltlf2dfa}, $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $\omega_n\models s$ for some $s\in q_n$. Since $q_n = \bigvee_{s\in q_n}\bigwedge_{\psi\in s}\psi$, it is true that $s\implies q_n$ for every $s\in q_n$. So $\omega_n\models s$ implies $\omega_n\models q_n$, which means basically when $k = n$, it holds that $\eta_k\models q_k$;
-	\item Inductively, assume $\eta_k\models q_k$ holds by satisfying $\eta_k\models s$ for some $s\in q_k$ ($0<k\leq n$). Because $q_{k-1}\tran{\omega_{k-1}}q_k$ is a transition in the \TDFA and $\eta_k\models q_k$ holds, the set $A_{k-1} = \omega_{k-1}\cup \{\X\theta | \theta\in s\}$ is a satisfying assignment of $\xnf(q_{k-1})^p$ in $\allsat(\xnf(q_{k-1})^p)_{|\omega_{k-1}}$, from Definition \ref{def:ltlf2dfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{k-1}=\omega_{k-1}\cdot\eta_k$ is true, we have that $\eta_{k-1}\models q_{k-1}$.
+	\item By the Definition \ref{def:ltlf2dfa}, we have that $\omega_n\models s$ for some $s\in q_n$. Since $q_n = \bigvee_{s\in q_n}\bigwedge_{\psi\in s}\psi$, it is true that $s\implies q_n$ for every $s\in q_n$. So $\omega_n\models s$ implies $\omega_n\models q_n$, which means basically when $i = 0$, it holds that $\eta_{n-0}\models q_{n-0}$;
+	\item Inductively, assume $\eta_{n-i}\models q_{n-i}$ holds by satisfying $\eta_{n-i}\models s$ for some $s\in q_{n-i}$ ($0<i\leq n$). Because $q_{n-i-1}\tran{\omega_{n-i-1}}q_{n-i}$ is a transition in the \TDFA and $\eta_{n-i}\models q_{n-i}$ holds, the set $A_{n-i-1} = \omega_{n-i-1}\cup \{\X\theta | \theta\in s\}$ is a satisfying assignment of $\xnf(q_{n-i-1})^p$ in $\allsat(\xnf(q_{n-i-1})^p)_{|\omega_{n-i-1}}$, from Definition \ref{def:ltlf2dfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{n-i-1}=\omega_{n-i-1}\cdot\eta_n-i$ is true, we have that $\eta_{n-i-1}\models q_{n-i-1}$.
 \end{itemize}
-When $k=0$, we prove that $\eta (=\eta_0)\models \phi (=q_0)$ is true.
 
 ($\Rightarrow$) We first prove that $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$. 
 If $n = 0$, Corollary \ref{coro:propSat} shows that there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\eta[0]\models L(A)$. From Definition \ref{def:ltlf2dfa}, $\phi\tran{\eta[0]}q$, where $q=\{X(A') | A'\in\allsat(\xnf(\phi)^p)_{|L(A)}\}$, is a transition of the \TDFA. As a result, there is a run $r=q_0(=\phi)q$ of ${\A_{\phi}}^{td}$ on $\eta$.
  
 If $n>0$, according to Lemma \ref{lem:propSat}, $\eta\models\phi$ implies there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\omega_0\models L(A)$ and $\eta_1\models X(A)$. From Definition \ref{def:ltlf2dfa}, $\phi (=q_0)\tran{\omega_0}q_1$, where $q_1=\{X(A') | A'\in\allsat(\xnf(\phi)^p)_{|\omega_0}\}$, is a transition in the \TDFA. Recursively applying the above process to $\eta_i\models q_i(i\geq 1)$, one can prove there is a transition $q_i\tran{\omega_i}q_{i+1}$ in the \TDFA. As a result, we have $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$.  
 
-Now we prove that the run $r$ is an accepting run. If $n=0$, the run $r$ is $q_0q_1$ such that $\eta[0]\models q_0(=\phi)$ holds. According to Definition \ref{def:ltlf2dfa}, the transition $q_0\tran{\eta[0]}q_1$ is an accepting transition. As a result, $r$ is an accepting run and $\eta$ is accepted by ${\A_{\phi}}^{td}$.
-
-If $n>0$, we can also prove that for the run $r=q_0q_1\ldots q_n q_{n+1}$, $q_n\tran{\omega_n}q_{n+1}$ is an accepting transition, due to the fact that $\omega_n\models q_n$, provided from that $\omega_n\models s$ for some $s\in q_n$. The proof is done. 
+Now we have that $\eta\models\phi$ implies there is a run $r=q_0...q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ and $\eta_i\models q_i\ for\ i=0...n$. When $i=n$, $\eta_n\models q_n$ i.e., $\omega_n\models q_n$ holds. According to Definition \ref{def:ltlf2dfa}, the transition $q_n\tran{\omega_n}q_{n+1}$ is an accepting transition. As a result, $r$ is an accepting run and $\eta$ is accepted by ${\A_{\phi}}^{td}$.
 \end{proof}
 
 We now discuss the upper bound of the generated \TDFA in the following theorem.

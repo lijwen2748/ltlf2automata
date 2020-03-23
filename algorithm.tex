@@ -1,36 +1,37 @@
 \section{Approach Overview}
 Given an $LTL_f$ formula $\phi$, there is a NFA $A_{\phi}$ which accepts exactly the same language as $\phi$. To construct the nondeterministic finite automaton (NFA) for an $ LTL_f$ formula $\phi$, we leverage SAT solvers to find all one-transition next states of the current state, then check the accepting states. 
 
-\subsection{LTL to NFA}
-Given an  $ LTL_f$ formula, We define the construction of transition system as follows. \\
+\subsection{LTL to \NFA}
+Given an  $ LTL_f$ formula, We define the construction of the \NFA  as follows: \\
   \begin{algorithm}[H]
     \SetAlgoNoLine
  \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
  \Input{ An $ LTL_f$ formula $\phi$\\}
-    \Output{ transition system S\\}
+    \Output{ NFA $A_{\phi}$\\}
     \BlankLine
- $to\_process:=\{\phi\}, S:=\{\phi\}$, \\
-\textbf{set} existing to mark visited states.\\
+ $to\_process:= \{\xnf(\phi)\}$\\
+ $xnf(\phi)$ is the initial state in $A_{\phi}$\\
 \textbf{while} $to\_process$ is not empty \textbf{do} \\
 \ cur =  $to\_process$.front;  \\
 \quad  \textbf{while} true \textbf{do} \\
 \qquad   \textbf{if} cur is not satisfiable  \textbf{then} \{ \\
 \qquad \quad $to\_process$.pop; \\
 \qquad \quad break;     \}\\
- \qquad  Let t=(label,next) a transition edge from current state(cur) \\
-\qquad\textbf{if} t.next is not in existing \textbf{then} \{ \\
-\qquad \quad $to\_process$.push(t.next); \\
-\qquad \quad existing.push(t.next); \\
-\qquad  \quad S.push(t.next)  \}\\
-\qquad  add transition edge t to the current state(cur)
- \caption{Construction of Transition System}
+ \qquad  next = $\rho(cur, label)$ \\
+\qquad\textbf{if} next is not in existing \textbf{then} \{ \\
+\qquad \quad $to\_process$.push($next$); \\
+\qquad \quad existing.push($next$); \\
+\qquad  \quad add the state $next$ to $A_{\phi}$\}\\
+\qquad  add the transition $cur\tran{label}next$ to $A_{\phi}$
+ \caption{Construction of the \NFA}
 \end{algorithm}
 
-The algorithm constructs the transition system on-the-fly. The initial state is set to be $\{\phi\}$, which is the input formula. 
+The algorithm constructs the transition system on-the-fly. The initial state is set to be $\{\phi\}$, which is the input formula. $to\_process$ is used to store a collection of states to be processed. Visited states are stored in $existing$. $front$ is used to describe the first element of an array. In a transition $s_1\tran{\omega}s_2$, $\omega$ is the $label$, $s_2$ is the $next$ state. \\
+In this algorithm, we first convert the input formula into its Next Normal Form, i.e., $\xnf(\phi)$. Then we use \SAT solvers to check if $\xnf(\phi)$ is satisfiable. If the answer is true, proceed to the next step, and if the answer is false, stop. After that, we leverage $\SAT solvers$ to get a transition $cur\tran{label}next$, and then we check if the state $next$ has been processed. If the answer is true, then we add the transition to ${A_{\phi}}^{tn}$, otherwise, the state $next$ will be added to  $to\_process$,existing and ${A_{\phi}}^{tn}$ respectively.
+
+
 \subsection{Checking Accepting States}  
-In this section, we present our algorithm for checking accepting states of $LTL_f$ formulas. The lemma  was proposed by (Jianwen Li ) at [].  \\
-
-
+In the previous section, we constructed the state and transition of the automaton without checking the accepting state.This section mainly deals with the determination of accepting states. \\
 To check whether a state is an accepting state, we can  discuss it in following two steps: \\
 1. If $s_1 $= tt, return true; \\
 2. If there exists a transition  $ s_1 \overset{\alpha}{\rightarrow}s_1$ and  the properties on the edge satisfy the current state, then return true. \\
