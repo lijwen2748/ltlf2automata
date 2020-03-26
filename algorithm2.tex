@@ -1,0 +1,30 @@
+\subsection{\ltlf-to-\TDFA}
+Given an \ltlf formula $\phi $, we have the algorithm to construct its \TDFA as follows:\\
+
+\begin{algorithm}[H]
+  \caption{Construction of the \TDFA}
+  \LinesNumbered
+  \KwIn{\ltlf formula $\phi$}
+  \KwOut{\TDFA\ ${A_\phi}^{td}=(\Sigma,Q,\delta,q_0,T^d)$}
+  $\Sigma\coloneqq 2^L$\;
+  $q_0\coloneqq\{\{\phi\}\}$\;
+  $Q\coloneqq\{q_0\}$\;
+  $to\_process\coloneqq\{q_0\}$\;
+  \While{$to\_process$ is not empty}
+  {
+    \textbf{get} a state $q$ from $to\_process$\;
+    $\psi\coloneqq\xnf(q)^p$\;
+    \textbf{let}  $label\_next$ be a map\;
+    \While{$\psi$ is satisfiable}
+    {
+      \textbf{get} a model $A$ of $\psi$\;
+      $label\coloneqq L(A)$\;
+      $next\coloneqq X(A)$\;
+      \If{$label\_next[label]=NULL$}
+      {
+      
+      }
+    }
+    \textbf{remove} $q$ from $to\_process$\;
+  }
+\end{algorithm}
