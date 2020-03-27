@@ -1,20 +1,23 @@
 \subsection{\ltlf-to-\TDFA}
-Given an \ltlf formula $\phi $, we have the algorithm to construct its \TDFA as follows:\\
+As shown in Algorithm \ref{DFA_construct}, we can construct a \TDFA from an \ltlf formula $\phi$ on-the-fly.
 
 \begin{algorithm}[H]
   \caption{Construction of the \TDFA}
   \LinesNumbered
+  \label{DFA_construct}
   \KwIn{\ltlf formula $\phi$}
   \KwOut{\TDFA\ ${A_\phi}^{td}=(\Sigma,Q,\delta,q_0,T^d)$}
   $\Sigma\coloneqq 2^L$\;
-  $q_0\coloneqq\{\{\phi\}\}$\;
   $Q\coloneqq\{q_0\}$\;
+  $\delta\coloneqq\emptyset$\;
+  $q_0\coloneqq\{\{\phi\}\}$\;
+  $T^d\coloneqq\emptyset$\;
   $to\_process\coloneqq\{q_0\}$\;
   \While{$to\_process$ is not empty}
   {
     \textbf{get} a state $q$ from $to\_process$\;
     $\psi\coloneqq\xnf(q)^p$\;
-    \textbf{let}  $label\_next$ be a map\;
+    \textbf{let}  $label\_next$ be a \textbf{map}\;
     \While{$\psi$ is satisfiable}
     {
       \textbf{get} a model $A$ of $\psi$\;
@@ -22,9 +25,28 @@ Given an \ltlf formula $\phi $, we have the algorithm to construct its \TDFA as 
       $next\coloneqq X(A)$\;
       \If{$label\_next[label]=NULL$}
       {
-      
+        $label\_next[label]\coloneqq \{next\}$\;
+      }
+      \Else
+      {
+        $label\_next[label]\coloneqq label\_next[label]\cup\{next\}$\;
+      }
+      $\psi\coloneqq \psi\land(\neg(\bigwedge A))$\;
+    }
+    \For{$(Label,Next)$ in $label\_next$}
+    {
+      \If{$Next\notin Q$}
+      {
+        \textbf{add} $Next$ into $Q$\;
+        \textbf{add} $Next$ into $to\_process$\;
+      }
+      \textbf{add} $q\times Label\to Next$ into $\delta$\;
+      \If{$Label\models q$}
+      {
+        \textbf{add} $q\times Label\to Next$ into $T^d$\;
       }
     }
     \textbf{remove} $q$ from $to\_process$\;
   }
+  \textbf{return} $(\Sigma,Q,\delta,q_0,T^d)$\;
 \end{algorithm}

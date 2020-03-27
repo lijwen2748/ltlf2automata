@@ -25,7 +25,7 @@ Given an  $ LTL_f$ formula, we define the construction of the \TNFA  as follows:
 \qquad  add a new transition $cur\tran{label}next$
  \caption{Construction of the \TNFA}
 \end{algorithm}
-
+~\\
 The algorithm constructs the automaton on-the-fly. S is the set of states in \TNFA $A^{tn}$. The initial state is set to be $\{\phi\}$, which is the input formula in the \XNF. $to\_process$ is used to store a collection of states to be processed. Visited states are stored in $existing$. $front$ is used to describe the first element of an array. In a transition $s_1\tran{\omega}s_2$, $\omega$ is the $label$, $s_2$ is the $next$ state. 
 
 
@@ -52,6 +52,7 @@ $S' = S\cup \{f\}$\\
 \qquad \qquad add a new transition $s\tran{w}f$;    \}     \\
  \caption{\TNFA-to-\NFA}
 \end{algorithm}
-The algorithm converts the \TNFA to \NFA by a few modifications to the original automata. S is used to represent the set of states in \TNFA. While $S'$ is used to represent the set of states in \NFA, with the addition of a new state f compared to S. Unlike \TNFA, the accepting condition of \NFA is defined over states. Thus, the algorithm use f to denote the accepting state. $label\_set$ is used to represent the set of s.labels. 
+~\\
+The algorithm converts the \TNFA to \NFA by a few modifications to the original automaton. S is used to represent the set of states in \TNFA. While $S'$ is used to represent the set of states in \NFA, with the addition of a new state f compared to S. Unlike \TNFA, the accepting condition of \NFA is defined over states. Thus, the algorithm use f to denote the accepting state. $label\_set$ is used to represent the set of s.labels. 
 
 In this algorithm, our approach adds a new transition $s\tran{w}f$ in the automaton for every accepting transition $s\tran{w}s'$ in the \TNFA. 
