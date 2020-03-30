@@ -1,10 +1,9 @@
 \subsection{\ltlf-to-\TDFA}
-As shown in Algorithm \ref{DFA_construct}, we can construct a \TDFA from an \ltlf formula $\phi$ on-the-fly.
+As shown in Algorithm~\ref{algo:DFAconstruct}, we can construct a \TDFA from an \ltlf formula $\phi$ on-the-fly.
 
-\begin{algorithm}[H]
+\begin{algorithm}[H]\label{algo:DFAconstruct}
   \caption{Construction of the \TDFA}
   \LinesNumbered
-  \label{DFA_construct}
   \KwIn{\ltlf formula $\phi$}
   \KwOut{\TDFA\ ${A_\phi}^{td}=(\Sigma,Q,\delta,q_0,T^d)$}
   $\Sigma\coloneqq 2^L$\;
@@ -13,7 +12,7 @@ As shown in Algorithm \ref{DFA_construct}, we can construct a \TDFA from an \ltl
   $q_0\coloneqq\{\{\phi\}\}$\;
   $T^d\coloneqq\emptyset$\;
   $to\_process\coloneqq\{q_0\}$\;
-  \While{$to\_process$ is not empty}
+  \While{$to\_process \neq \emptyset$}
   {
     \textbf{get} a state $q$ from $to\_process$\;
     $\psi\coloneqq\xnf(q)^p$\;
@@ -50,3 +49,5 @@ As shown in Algorithm \ref{DFA_construct}, we can construct a \TDFA from an \ltl
   }
   \textbf{return} $(\Sigma,Q,\delta,q_0,T^d)$\;
 \end{algorithm}
+~\\
+Obviously, Algorithm~\ref{algo:DFAconstruct} is developed from Definition \ref{def:ltlf2dfa}. In the algorithm, the function of $to\_process$ is the same as in Algorithm~\ref{algo:TNFAconstruct}. Each time the while loop in the first level (Line~7) is executed, a state will be taken from $to\_process$ to solve all its successor states, and new states that have not appeared will be added to $Q$ and $to\_process$. After solving the successor of a state, it will be removed from $to\_process$. When we are to get the successor of a state $q$, we process all models of the $\xnf(q)^p$. The map $label\_next$ is used to integrate the $X(A)$ part of the models with the same $X(A)$ (Line~16-18). Then the for loop (Line~20) adds new states into $Q$ and $to\_process$, and adds the transition in $label\_next$ into $\delta$ and $T^d$ (if accepting condition holds).

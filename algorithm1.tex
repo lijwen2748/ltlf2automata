@@ -1,58 +1,65 @@
 \section{Implementation}\label{sec:algorithm}
-Given an $LTL_f$ formula $\phi$, there is a \NFA $A_{\phi}$ which accepts exactly the same language as $\phi$. To construct the nondeterministic finite automaton (\NFA) for an $ LTL_f$ formula $\phi$, our approach first constructs the corresponding transition-based \NFA, then converts the \TNFA to its equivalent \NFA. The following two subsections will describe this process. The first subsection describes the algorithm of \ltlf-to-\TNFA. The second subsection describes the algorithm of \TNFA-to-\NFA.
+For each \ltlf formula, there are (T)\NFA and \DFA that accept the same language as themselves. In this section, we will first give algorithms for constructing \TNFA from the \ltlf formula and converting \TNFA to \NFA. Then we will introduce how to get \TDFA directly from a given \ltlf formula.
 
-\subsection{\ltlf-to-\TNFA}
-Given an  $ LTL_f$ formula, we define the construction of the \TNFA  as follows: \\
-  \begin{algorithm}[H]
-    \SetAlgoNoLine
- \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
- \Input{ An $ LTL_f$ formula $\phi$\\}
-    \Output{ \TNFA $A^{tn}$\\}
-    \BlankLine
- $to\_process:= \{\phi\}$\\
- S = $\{\phi\}$ \\
-\textbf{while} $to\_process$ is not empty \textbf{do} \\
-\ cur =  $to\_process$.front;  \\
-\quad  \textbf{while} true \textbf{do} \\
-\qquad   \textbf{if} cur is not satisfiable  \textbf{then} \{ \\
-\qquad \quad $to\_process$.pop; \\
-\qquad \quad break;     \}\\
- \qquad  next = $\rho(cur, cur.label)$ \\
-\qquad\textbf{if} next is not in existing \textbf{then} \{ \\
-\qquad \quad $to\_process$.push($next$); \\
-\qquad \quad existing.push($next$); \\
-\qquad  \quad add a new state $next$ in S\\
-\qquad  add a new transition $cur\tran{label}next$
- \caption{Construction of the \TNFA}
+\subsection{\ltlf-to-(T)\NFA}
+We define the construction of the \TNFA from an given \ltlf formula as follows: 
+
+\begin{algorithm}[H] \label{algo:TNFAconstruct}
+  \caption{Construction of the \TNFA}
+  \LinesNumbered
+  \KwIn{\ltlf formula $\phi$}
+  \KwOut{\TNFA\ ${A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
+  $\Sigma\coloneqq 2^L$\;
+  $s_0\coloneqq\{\phi\}$\;
+  $S\coloneqq\{s_0\}$\;
+  $\rho\coloneqq\emptyset$\;
+  $T\coloneqq\emptyset$\;
+  $to\_process\coloneqq\{s_0\}$\;
+  \While{$to\_process\neq\emptyset$}
+  {
+    \textbf{get} a state $s$ from $to\_process$\;
+    $\psi\coloneqq\xnf(s)^p$\;
+    \While{$\psi$ is satisfiable}
+    {
+      \textbf{get} a model $A$ of $\psi$\;
+      $label\coloneqq L(A)$\;
+      $next\coloneqq X(A)$\;
+      \If{$next\notin S$}
+      {
+        \textbf{add} $next$ into $S$\;
+        \textbf{add} $next$ into $to\_process$\;
+      }
+       \textbf{add} $s\times label\to next$ into $\rho$\;
+        \If{$label\models s$}
+      {
+        \textbf{add} $s\times label\to next$ into $T$\;
+      }
+       $\psi\coloneqq \psi\land(\neg(\bigwedge A))$\;
+    }
+    \textbf{remove} $s$ from $to\_process$\;
+  }
+  \textbf{return} $(\Sigma,S,\rho,s_0,T)$\;
 \end{algorithm}
 ~\\
-The algorithm constructs the automaton on-the-fly. S is the set of states in \TNFA $A^{tn}$. The initial state is set to be $\{\phi\}$, which is the input formula in the \XNF. $to\_process$ is used to store a collection of states to be processed. Visited states are stored in $existing$. $front$ is used to describe the first element of an array. In a transition $s_1\tran{\omega}s_2$, $\omega$ is the $label$, $s_2$ is the $next$ state. 
+To get the automaton, we need to solve all the successor states and related transitions of each state. In the algorithm, $to\_process$ is the set of states whose successor states have not yet been calculated. Each time the first layer of the while loop (Line~7) is executed, the successor states and transitions of a state will be calculated. After a state is processed, it will be removed from $to\_process$. State $s$ corresponds to the formula $xnf(s)^p$, and one model of $xnf(s)^p$ corresponds to one transition and one successor. When we have a model $A$ of $xnf(s)^p$ by \SAT solver, we can get $label\coloneqq L(A)$ as the label of the transition and $next\coloneqq X(A)$ as the successor. If the state corresponding to $next$ appears for the first time, it will be added into $S$ and $to\_process$. The transition $s\times label\to next$ should be added into $\delta$. Then we check whether the transition are accepting transition. If $label\models s$, we add it into $T$. We update $\psi$ to be $\psi\land(\neg(\bigwedge A))$ in order to avoid duplicate model of $xnf(s)^p$. The algorithm terminates when $to\_process$ is empty, which means that all states and their transitions and successors are solved.
 
+After constructing the TNFA, we introduce the conversion from \TNFA to \NFA in Algorithm~\ref{algo:TNFA2NFA}.
 
-In this algorithm, we first use \SAT solvers to check if $\phi$ is satisfiable. If the answer is true, proceed to the next step, and if the answer is false, stop. After that, we leverage $\SAT solvers$ to get a transition $cur\tran{label}next$, and then we check if the state $next$ has been processed. If the answer is true, then we add the transition to ${A_{\phi}}^{tn}$, otherwise, the state $next$ will be added to  $to\_process$,existing and ${A_{\phi}}^{tn}$ respectively. 
-
-
-The algorithm above mentions the construction of the \TNFA, but does not mention the determination of accepting conditions. By the way, the accepting condition in \TNFA is that if there is such a transition $s_1\tran{w}s_2$, where $w\models s_1$, then the transition is accepting.  
-
-
-\subsection{\TNFA-to-\NFA}  
-In the previous section, we constructed the state and transition of the \TNFA. This section will focus on the conversion from \TNFA-to-\NFA, with the addition of accepting states. The algorithm is stated as follows:\\
-
-\IncMargin{1em}
- \begin{algorithm}[H]
-    \SetAlgoNoLine
- \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
- \Input{ \TNFA $A^{tn}$\\}
-    \Output{  \NFA $A^{n}$}
-    \BlankLine
-$S' = S\cup \{f\}$\\
-\textbf{for} state s in $S'$ \\
-\qquad  $ \textbf{for}$ w in s.label\_set  \\
-\qquad  \quad \textbf{if} $w \models s$   \textbf{then}\{      \\
-\qquad \qquad add a new transition $s\tran{w}f$;    \}     \\
- \caption{\TNFA-to-\NFA}
-\end{algorithm}
+\begin{algorithm}[H] \label{algo:TNFA2NFA}
+  \caption{Conversion from \TNFA to \NFA}
+  \LinesNumbered
+  \KwIn{\TNFA\ ${A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
+  \KwOut{\NFA\ ${A_\phi}^{n}=(\Sigma,S',\rho',s_0,F)$}
+  $\Sigma\coloneqq 2^L$\;
+  $s_0\coloneqq\{\phi\}$\;
+  $S'\coloneqq S\cup \{f\}$\;
+  $\rho'\coloneqq\rho$\;
+  $F\coloneqq \{f\}$\;
+  \For{$s_1\times \omega\to s_2\in T$}
+  {
+    \textbf{add} $s_1\times \omega\to f$ into $\rho'$\;
+  }
+  \textbf{return} $(\Sigma,S',\rho',s_0,F)$\;
+  \end{algorithm}
 ~\\
-The algorithm converts the \TNFA to \NFA by a few modifications to the original automaton. S is used to represent the set of states in \TNFA. While $S'$ is used to represent the set of states in \NFA, with the addition of a new state f compared to S. Unlike \TNFA, the accepting condition of \NFA is defined over states. Thus, the algorithm use f to denote the accepting state. $label\_set$ is used to represent the set of s.labels. 
-
-In this algorithm, our approach adds a new transition $s\tran{w}f$ in the automaton for every accepting transition $s\tran{w}s'$ in the \TNFA. 
+The algorithm converts the \TNFA to \NFA by a few modifications to the original automaton. Compared with the \TNFA, we add an accepting state $f$ and a new transition $s_1\times \omega\to f$ for every accepting transition $s_1\times \omega\to s_2\in T$.
