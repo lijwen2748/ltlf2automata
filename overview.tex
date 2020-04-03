@@ -1,4 +1,4 @@
-\section{Approach Overview}\label{sec:overview}
+\section{Approach Overview} \label{sec:overview}
 
 \begin{figure*}
 \centering
@@ -7,7 +7,7 @@
   \label{fig:overview}
 \end{figure*}
 
-Our approach first constructs the equivalent transition-based \NFA (\TNFA) for the input formula and then converts the \TNFA to its equivalent \NFA. A \TNFA is a special \NFA whose accepting conditions are defined over transitions instead of states. To convert a \TNFA to its equivalent \NFA, one can create a new state $f$ such that the transition $s\tran{\omega}f$ is added in the result \NFA for every accepting transition $s\tran{\omega}s'$ in the \TNFA. The new state $f$ is the only accepting state in the result \NFA. Figure \ref{fig:overview} illustrates an example of the whole translation process. 
+Our approach first constructs the equivalent transition-based \NFA (\TNFA) for the input formula and then converts the \TNFA to its equivalent \NFA. A \TNFA is a special \NFA whose accepting conditions are defined over transitions instead of states. To convert a \TNFA to its equivalent \NFA, one can create a new state $f$ and add the transition $s\tran{\omega}f$ into the result \NFA for every accepting transition $s\tran{\omega}s'$ in the \TNFA. The new state $f$ is the only accepting state in the result \NFA. Figure \ref{fig:overview} illustrates an example of the whole translation process. 
 
 Given an \ltlf formula $\phi$, the high-level descriptions on how to generate the equivalent \TNFA are as follows. We first convert $\phi$ to its neXt Normal Form (\XNF), which can be considered as a propositional formula over the alphabet composed of only Boolean atoms and neXt formulas. For example, the \XNF of the formula $\phi=a\R b$, which is denoted as $\xnf(\phi)$, is $b\wedge (a\vee \X(a\R b))$. Notably, the conversion cost from an \ltlf formula to its \XNF is linear to the size of the formula. Then we denote $\xnf(\phi)^p$ is the propositional formula over the alphabet set $\{a, b, \X(a\R b)\}$.
 

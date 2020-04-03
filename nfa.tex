@@ -22,7 +22,7 @@ Consider the formula $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedg
 Given an \ltlf formula $\phi$, let $\phi^{p}$ be a propositional formula over $\PA(\phi)$. 
 \end{definition}
 
-Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables w.r.t. the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. We define the \emph{next normal form} for an \ltlf formula, whose corresponding propositional formula is the actual input of \SAT solvers.
+Consider $\phi$ = $(a \wedge ((\neg c \wedge a)\U b) \wedge (c \wedge \X (a \vee b)))$. From Definition \ref{def:pf}, the corresponding propositional formula $\phi^p = (a \wedge p_1) \wedge (c \wedge p_2)$, in which $p_1, p_2$ are two Boolean variables representing the truth values of $((\neg c \wedge a)\U b)$ and $(c \wedge \X (a \vee b))$. We define the \emph{next normal form} for an \ltlf formula, whose corresponding propositional formula is the actual input of \SAT solvers.
 
 \begin{definition}[neXt Normal Form]\label{def:xnf}
 For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$, recursively as follows. 
@@ -33,32 +33,33 @@ For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$,
 \item If $\phi = (\phi_1 \wedge \phi_2)$, $\xnf(\phi) = \xnf(\phi_1)\wedge\xnf(\phi_2)$;
 \item If $\phi = (\phi_1 \vee \phi_2), \xnf(\phi) = \xnf(\phi_1)\vee \xnf(\phi_2)$; 
 \item If $\phi = (\phi_1 \U \phi_2), \xnf(\phi) = \xnf(\phi_2) \vee (\xnf(\phi_1) \wedge \X(\phi))$; 
-\item If $\phi = (\phi_1 \R \phi_2), \xnf(\phi) = \xnf(\phi)\wedge (\xnf(\phi_2) \vee \X(\phi))$.
+\item If $\phi = (\phi_1 \R \phi_2), \xnf(\phi) = \xnf(\phi_2)\wedge (\xnf(\phi_1) \vee \X(\phi))$.
 \end{itemize}
 \end{definition}
 
-By restricting the \ltlf formula $\phi$ to the \XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of a SAT solver.
-For a satisfying assignment $A$, we define $X(A)=\{\theta\ |\ \X\theta\in A\}$ and $L(A) =\{l\ |\ l \textit{ is a literal}\}$. Also for the simple description, \textbf{we mix the usage of $X(A)$ to denote the conjunction of all elements in the set, i.e., $\bigwedge_{\psi_i\in X(A)}\psi$. The same applies to $L(A)$.}
+By restricting the \ltlf formula $\phi$ to the \XNF, we can obtain a satisfying assignment of $\phi^{p}$ with the help of the SAT solver.
+For a satisfying assignment $A$, we define $X(A)=\{\theta\ |\ \X\theta\in A\}$ and $L(A) =\{l\ |\ l \textit{ is a literal}\}$. Also for the simple description, \textbf{we mix the usage of $X(A)$ to denote the conjunction of all elements in the set, i.e., $\bigwedge_{\psi_i\in X(A)}\psi_i$. The same applies to $L(A)$.}
 The following lemma describes the relationship between an \ltlf formula and the satisfying assignment of its corresponding propositional formula.
 
 \begin{lemma}\label{lem:propSat}
 Given an \ltlf formula $\phi$ in the \XNF and a finite trace $\eta\in\Sigma^+$ with $|\eta|>1$, $\eta\models\phi$ holds iff there is a satisfying assignment $A$ of $\phi^p$ such that $\eta[0]\models L(A)$ and $\eta\models X(A)$.
 \end{lemma}
 \begin{proof}
-$(\Rightarrow)$ The proof can be achieved by induction over the types of $\phi$.
+$(\Rightarrow)$ The proof can be achieved by induction over the types of $\phi$. Since $\phi$ is in \XNF, $\phi$ cannot be an Until or Release formula.
 \begin{itemize}
-	\item if $\phi$ is a literal, Next, Unitl or Release formula, $\eta\models\phi$ implies $\eta[0]\models\phi$. Let $A=\{\phi\}$ and it is true that $\eta[0]\models L(A)$ and $\eta_1\models X(A)$ (In this situation, $X(A)\equiv \tt$); 
+	\item if $\phi$ is a literal,  we could have a satisfying assignment $A=\{\phi\}$ for $\phi^p$. In this situation, $L(A)=\{\phi\}$ and $X(A)=\{\tt\}$. Therefore, it is true that $\eta[0]\models L(A)$ and $\eta_1\models X(A)$;
+	\item if $\phi=\X\psi$, we could have a satisfying assignment $A=\{\X\psi\}$ for $\phi^p$. In this situation, $L(A)=\{\tt\}$ and $X(A)=\{\psi\}$. Considering we have $\eta\models\phi$ i.e., $\eta\models\X\psi$, it is true that $\eta[0]\models L(A)$ and $\eta_1\models X(A)$;
 	\item if $\phi = \phi_1\wedge\phi_2$, $\eta\models\phi$ 
 implies $\eta\models\phi_1$ and $\eta\models\phi_2$. By assumption hypothesis, there is $A_i$ of $\phi_i^p$ ($i=1,2$) such that 
 $\eta[0]\models L(A_i)$ and $\eta_1\models X(A_i)$. Let $A = A_1\cup A_2$, and a consistent $A$, in which either $\psi$ or $\neg \psi$ cannot be together, 
 must exists ($A$ may not be unique because $A_1$ and $A_2$ may not be unique). 
 Otherwise, there is $\psi\in A_1$ and $\neg\psi\in A_2$ 
 such that $\eta$ cannot model $\bigwedge A_1$ and $\bigwedge A_2$ at the same time, which is a contradiction. So $A$ is a satisfying  assignment of $\phi^p$, which leads to $\eta[0]\models L(A)$ and $\eta_1\models X(A)$. 
-\item The proof for $\phi=\phi_1\vee\phi_2$ is analogous with the proof when $\phi = \phi_1\wedge\phi_2$. Also, Since $\phi$ is in \XNF, $\phi$ cannot be an Until or Release formula. The proof is done.
+\item The proof for $\phi=\phi_1\vee\phi_2$ is analogous with the proof when $\phi = \phi_1\wedge\phi_2$.
 \end{itemize} 
 
-$(\Leftarrow)$ $A$ is a satisfying assignment of $\phi^p$, so $A\models\phi^p$ implies $(\bigwedge A)\Rightarrow \phi$. 
-Also, $\eta[0]\models L(A)$ and $\eta_i\models X(A)$ implies $\eta\models \bigwedge A$. Therefore, it is true that $\eta\models \phi$.
+$(\Leftarrow)$ Let $A$ be a satisfying assignment of $\phi^p$, so $A\models\phi^p$ implies $(\bigwedge A)\Rightarrow \phi$. 
+Also, $\eta[0]\models L(A)$ and $\eta_1\models X(A)$ implies $\eta\models \bigwedge A$. Therefore, it is true that $\eta\models \phi$.
 \end{proof}
 
 Lemma \ref{lem:propSat} does not cover the case when $|\eta|=1$, which yields the following corollary. 
@@ -86,7 +87,7 @@ Given an \ltlf formula $\phi$, the corresponding transition-based \NFA ${\A_{\ph
 
 As Definition \ref{def:ltlf2nfa} shows, a state in the \NFA is a set of subformulas of the input $\phi$. For the simple description, \textbf{we mix the usage of a state $s$ such that it can also represent a Boolean formula $\bigwedge_{\psi_i\in s}\psi_i$, i.e., the conjunction of all subformulas in $s$.} 
 
-A run $r$ of the transition-based \NFA ${\A_{\phi}}^{tn}$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. $\eta$ is accepted by ${\A_{\phi}}^{tn}$ iff there is a run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$ which ends with some accepting transition in $T$. 
+A run $r$ of the transition-based \NFA ${\A_{\phi}}^{tn}$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. $\eta$ is accepted by ${\A_{\phi}}^{tn}$ iff there exists a run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$ which ends with an accepting transition in $T$. 
 
 Since in Definition \ref{def:ltlf2nfa}, the satisfaction of a finite trace with length one to an \ltlf formula is used to determine the accepting conditions, we introduce the following theorem to show that this process can be achieved in a much easier way than the regular satisfaction check in which the finite trace can have an arbitrary length.
 
@@ -105,7 +106,7 @@ Given a finite trace $\eta \in \Sigma^{+}$ with $|\eta|=1$, and an \ltlf formula
 \end{theorem}
 
 \begin{proof}
-The lemma is self-explained which can be derived from the semantics of \ltlf.
+The theorem is self-explained which can be derived from the semantics of \ltlf.
 \end{proof}
 
 We present the following theorem to guarantee the correctness of our construction. 
@@ -145,17 +146,15 @@ For an \ltlf formula $\phi$, the size of the corresponding $\TNFA$ ${\A_{\phi}}^
 We have shown the construction from an \ltlf formula to its equivalent \TNFA. The following theorem indicates that there is a trivial way to convert a \TNFA to its equivalent \NFA. 
 
 \begin{theorem}\label{thm:tnfa2nfa}
-For a \TNFA $\A^{tn}$, there is a \NFA $\A^n$ such that $\eta$ is accepted by $\A^{tn}$ iff $\eta$ is accepted by $\A^n$, for $\eta\in \Sigma^+$. 
+For a \TNFA $\A^{tn}$, there is an equivalent \NFA $\A^n$ such that $\eta$ is accepted by $\A^{tn}$ iff $\eta$ is accepted by $\A^n$, for $\eta\in \Sigma^+$. 
 \end{theorem}
 \begin{proof}
 Assume $\A^{tn}=(\Sigma, S, \rho, s_0, T)$ and one can construct the \NFA $\A^{n} = (\Sigma, S', \rho', s_0, F)$ such that 
 \begin{itemize}
-	\item $S' = S\cup \{f\}$ where $f$ is a new and the only accepting state in $\A^n$; and 
-	\item the transition function $\rho'$ satisfies $s_2\in \rho'(s_1,\omega)$ holds iff $s_2\in \rho(s_1, \omega)$ holds when $s_2\not = f$; otherwise, there is a transition $s_1\tran{\omega}s_3$ in $T$. 
+	\item $S' = S\cup \{f\}$ where $f$ is a new and the only accepting state in $\A^n$; 
+	\item $\rho'=\rho\cup\{s_1\times\omega\to f|\ s_1\times\omega\to s_2\in T\}$;
 	\item $F=\{f\}$.
 \end{itemize}
-We consider as follows to prove the equivalence of $\A^{tn}$ and $\A^n$: On one hand, every accepting run of $\A^{tn}$ which ends with an accepting transition in $T$ can also be an accepting run of $\A^n$ which ends with the accepting state $f$. On the other hand, every accepting run of $\A^{n}$ which ends with the accepting state $f$ can also be an accepting run of $\A^{tn}$ which ends with an accepting transition in $T$.
+We prove the equivalence of $\A^{tn}$ and $\A^n$ as follows. On one hand, every accepting run of $\A^{tn}$ which ends with an accepting transition in $T$ can also be an accepting run of $\A^n$ which ends with the accepting state $f$. On the other hand, every accepting run of $\A^{n}$ which ends with the accepting state $f$ can also be an accepting run of $\A^{tn}$ which ends with an accepting transition in $T$.
 \end{proof}
-
-
 

@@ -1,14 +1,14 @@
 \section{Implementation}\label{sec:algorithm}
-For each \ltlf formula, there are (T)\NFA and \DFA that accept the same language as themselves. In this section, we will first give algorithms for constructing \TNFA from the \ltlf formula and converting \TNFA to \NFA. Then we will introduce how to get \TDFA directly from a given \ltlf formula.
+For each \ltlf formula, there are (T)\NFA and \DFA that accept the same language as the formula. In this section, we will first give the algorithms for constructing \TNFA from the \ltlf formula and converting \TNFA to \NFA. Then we will introduce the algorithm for constructing \TDFA directly from a given \ltlf formula. All algorithms will be presented in pseudo-code.
 
 \subsection{\ltlf-to-(T)\NFA}
 We define the construction of the \TNFA from an given \ltlf formula as follows: 
-
+~\\
 \begin{algorithm}[H] \label{algo:TNFAconstruct}
   \caption{Construction of the \TNFA}
   \LinesNumbered
   \KwIn{\ltlf formula $\phi$}
-  \KwOut{\TNFA\ ${A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
+  \KwOut{\TNFA\ ${\A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
   $\Sigma\coloneqq 2^L$\;
   $s_0\coloneqq\{\phi\}$\;
   $S\coloneqq\{s_0\}$\;
@@ -48,8 +48,8 @@ After constructing the TNFA, we introduce the conversion from \TNFA to \NFA in A
 \begin{algorithm}[H] \label{algo:TNFA2NFA}
   \caption{Conversion from \TNFA to \NFA}
   \LinesNumbered
-  \KwIn{\TNFA\ ${A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
-  \KwOut{\NFA\ ${A_\phi}^{n}=(\Sigma,S',\rho',s_0,F)$}
+  \KwIn{\TNFA\ ${\A_\phi}^{tn}=(\Sigma,S,\rho,s_0,T)$}
+  \KwOut{\NFA\ ${\A_\phi}^{n}=(\Sigma,S',\rho',s_0,F)$}
   $\Sigma\coloneqq 2^L$\;
   $s_0\coloneqq\{\phi\}$\;
   $S'\coloneqq S\cup \{f\}$\;

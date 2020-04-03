@@ -1,25 +1,26 @@
 \section{Preliminaries} \label{sec:pre}
 This section introduces the basic concepts w.r.t the linear temporal logic over finite traces (\ltlf) and finite automata. 
-\subsection{LTL over finite Traces (\ltlf)}
+\subsection{LTL over Finite Traces (\ltlf)}
 Classical \ltl formulas are interpreted over infinite traces, which are widely used as the formal property languages to describe system behaviors. Meanwhile, the formulas of \ltlf, which is a variant of \ltl, are interpreted over finite traces. \ltlf are so far widely used in the AI community to describe finite system bahaviors. Given a set $P$ of atomic propositions, the syntax of an \ltlf formula $\phi$ is shown as below.
 
 \begin{center}  
 $\phi:=\tt\ |\ \ff\ |\ p\ |\neg\phi\ |\ \phi \vee \phi\ |\ \phi \wedge \phi\ |\ \X \phi\ |\ \N \phi\ |\ \phi \U \phi\ |\ \phi \R \phi$ 
 \end{center}
 
-In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N \phi$ (weak Next), $\U$ (Until), and $\R$ (Release) are temporal operators. We say $\phi$ is a \emph{literal} if $\phi$ is a proposition or the negation of a proposition. $\X$ and $\N$ (resp. $\U$ and $\R$) are dual operators, i.e. $\X\phi\equiv \neg(\N\neg\phi)$ (resp. $\phi_1\U\phi_2 \equiv \neg (\neg\phi_1 \R\neg\phi_2)$) is semantically true. Boolean operators such as $\rightarrow$ and $\leftrightarrow$ can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$, respectively. Furthermore, we denote the constant \textsf{true} as \tt and \textsf{false} as \ff. We use the particular notation $\F$ (Future) (resp. $\G$ (Global)) for $\U$ (resp. $\R$) such that $\F\phi \equiv \tt\U\phi$ (resp. $\G\phi \equiv \ff \R\phi$) is semantically true. Let $\Sigma = 2^P$ be the set of alphabet and $\eta\in\Sigma^+$ is a finite trace defined over $\Sigma$. We use $\eta[i]$ to denote the $i$-th element of $\eta$, use $\eta_i$ to denote the suffix of $\eta$ starting from position $i$ (including $i$), and use $|\eta|$ to denote the length of $\eta$. Then the semantics of \ltlf formulas are interpreted as follows.
+In the above, $p \in P$ is an \emph{atom}, while $\X$ (strong Next), $\N$ (weak Next), $\U$ (Until), and $\R$ (Release) are temporal operators. A \emph{literal} is an \emph{atom} $p\in P$ or its negation $\neg p$. $\X$ and $\N$ (resp. $\U$ and $\R$) are dual operators, i.e. $\X\phi\equiv \neg(\N\neg\phi)$ (resp. $\phi_1\U\phi_2 \equiv \neg (\neg\phi_1 \R\neg\phi_2)$) is semantically true. Boolean operators such as $\rightarrow$ and $\leftrightarrow$ can be represented by the combination $(\neg, \vee)$ or $(\neg, \wedge)$. Furthermore, we denote the constant \textsf{true} as \tt and \textsf{false} as \ff. We use the particular notation $\F$ (Future) (resp. $\G$ (Global)) for $\U$ (resp. $\R$) such that $\F\phi \equiv \tt\U\phi$ (resp. $\G\phi \equiv \ff \R\phi$) is semantically true. Let $\Sigma = 2^P$ be the set of alphabet and $\eta\in\Sigma^+$ is a finite nonempty trace defined over $\Sigma$, with $\eta=\sigma_0\sigma_1\dots\sigma_n$. For $0\leq i\leq n$, we use $\eta[i]$ to denote the $i$-th element of $\eta$ (i.e., $\sigma_i$), use $\eta_i$ to denote $\sigma_i\dots\sigma_n$ which is the suffix of $\eta$ starting from position $i$, and use $|\eta|=n+1$ to denote the length of $\eta$. Then the semantics of \ltlf formulas are interpreted as follows.
 \begin{itemize}
 \item  $\eta \models \tt$ and $\eta \not\models \ff$;
-\item  If $\phi = p$ is a literal, $\eta \models \phi$ iff $p \in \eta[0]$;
-\item  If $\phi = \X \psi$, $\eta \models \phi$ iff $|\eta|>1$ and $\eta_{1} \models \psi$;
-\item  If $\phi = \N \psi$, $\eta \models \phi$ iff either $|\eta| = 1$, or $\eta_{1} \models \psi$;
-\item  If $\phi = \phi_{1} \U \phi_{2}$, $\eta \models\phi$ iff there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{2}$, and for every $0 \leq j<i$ it holds that $\eta_{j} \models \phi_{1}$;
-\item  If $\phi = \phi_{1} \R \phi_{2}$, $\eta \models \phi$ iff either for every $0 \leq i<|\eta|$ it holds $\eta_{i}\models \phi_{2}$, or there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{1}$ and for all $0 \leq j \leq i$ it holds $\eta_{j} \models \phi_{2}$;
-\item  If $\phi = \phi_{1} \wedge \phi_{2}$, $\eta \models \phi$ iff $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$;
-\item  If $\phi=\phi_{1} \vee \phi_{2}$, $\eta \models \phi$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$.
+\item  $\eta \models p$ iff $p \in \eta[0]$, where $p\in P$;
+\item  $\eta\models\neg\phi$ iff $\eta\not\models\phi$;
+\item  $\eta \models \phi_{1} \wedge \phi_{2}$ iff $\eta \models \phi_{1}$ and $\eta \models \phi_{2}$;
+\item  $\eta \models \phi_{1} \vee \phi_{2}$ iff $\eta \models \phi_{1}$ or $\eta \models \phi_{2}$;
+\item  $\eta \models \X \phi$ iff $|\eta|>1$ and $\eta_{1} \models \phi$;
+\item  $\eta \models \N \phi$ iff either $|\eta| = 1$, or $\eta_{1} \models \phi$;
+\item  $\eta \models\phi_{1} \U \phi_{2}$ iff there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{2}$, and for every $0 \leq j<i$ it holds that $\eta_{j} \models \phi_{1}$;
+\item  $\eta \models\phi_{1} \R \phi_{2}$ iff either for every $0 \leq i<|\eta|$ it holds $\eta_{i}\models \phi_{2}$, or there exists $0 \leq i<|\eta|$ such that $\eta_{i} \models \phi_{1}$ and for all $0 \leq j \leq i$ it holds $\eta_{j} \models \phi_{2}$.
 \end{itemize}
 
-We use $\cl(\phi)$ to denote the set of subformulas of $\phi$ \cite{Wol81}, whose formal definition are as follows: (1) $\phi\in\cl(\phi)$; (2) if $op (\psi)\in\cl(\psi)$, so does $\psi\in\cl(\psi)$, where $op$ is $\X,\N,\neg,\F$ or $\G$; (3) if $\psi_1\ op\ \psi_2\in\cl(\phi)$, so does $\psi_1\in\cl(\phi)$ and $\psi_2\in\cl(\phi)$, where $op$ is $\U,\R,\wedge$ or $\vee$. In the rest of the paper, all \ltlf formulas are considered in the \emph{Negated Normal Form} (\NNF), i.e., every negation appears only in front of an atom. It is not hard to see that every \ltlf formula can be converted to the equivalent \NNF, and the conversion cost is linear to the size of the formula.
+We use $\cl(\phi)$ to denote the set of subformulas of $\phi$~\cite{Wol81}, whose formal definition are as follows: (1) $\phi\in\cl(\phi)$; (2) $\psi\in\cl(\phi)$ if $\phi=op(\psi)$, where $op$ can be $\neg,\X,\N,\F$ or $\G$; (3) $\psi_1\in\cl(\phi)$ and $\psi_2\in\cl(\phi)$, if $\psi_1\ op\ \psi_2\in\cl(\phi)$, where $op$ can be $\wedge,\vee,\U$ or $\R$. In the rest of the paper, all \ltlf formulas are considered in the \emph{Negated Normal Form} (\NNF), i.e., every negation appears only in front of an atom. It is obvious that every \ltlf formula can be converted to the equivalent \NNF, and the conversion cost is linear to the size of the formula.
 
 \subsection{Finite Automata}
 \noindent A finite automaton $\A$ is a tuple $(\Sigma, S, \rho, s_0, \Omega)$ where 
