@@ -1,9 +1,3 @@
-\section{Implementation}\label{sec:algorithm}
-For each \ltlf formula, there are (T)\NFA and \DFA that accept the same language as the formula. In this section, we will first give the algorithms for constructing \TNFA from the \ltlf formula and converting \TNFA to \NFA. Then we will introduce the algorithm for constructing \TDFA directly from a given \ltlf formula. All algorithms will be presented in pseudo-code.
-
-\subsection{\ltlf-to-(T)\NFA}
-We define the construction of the \TNFA from an given \ltlf formula as follows: 
-~\\
 \begin{algorithm}[H] \label{algo:TNFAconstruct}
   \caption{Construction of the \TNFA}
   \LinesNumbered
@@ -40,7 +34,14 @@ We define the construction of the \TNFA from an given \ltlf formula as follows:
   }
   \textbf{return} $(\Sigma,S,\rho,s_0,T)$\;
 \end{algorithm}
-~\\
+
+\section{Implementation}\label{sec:algorithm}
+For each \ltlf formula, there are (T)\NFA and \DFA that accept the same language as the formula. In this section, we will first give the algorithms for constructing \TNFA from the \ltlf formula and converting \TNFA to \NFA. Then we will introduce the algorithm for constructing \TDFA directly from a given \ltlf formula. All algorithms will be presented in pseudo-code.
+
+\subsection{\ltlf-to-(T)\NFA}
+We define the construction of the \TNFA from an given \ltlf formula as shown in Algorithm \ref{algo:TNFAconstruct}. 
+
+
 To get the automaton, we need to solve all the successor states and related transitions of each state. In the algorithm, $to\_process$ is the set of states whose successor states have not yet been calculated. Each time the first layer of the while loop (Line~7) is executed, the successor states and transitions of a state will be calculated. After a state is processed, it will be removed from $to\_process$. State $s$ corresponds to the formula $xnf(s)^p$, and one model of $xnf(s)^p$ corresponds to one transition and one successor. When we have a model $A$ of $xnf(s)^p$ by \SAT solver, we can get $label\coloneqq L(A)$ as the label of the transition and $next\coloneqq X(A)$ as the successor. If the state corresponding to $next$ appears for the first time, it will be added into $S$ and $to\_process$. The transition $s\times label\to next$ should be added into $\delta$. Then we check whether the transition are accepting transition. If $label\models s$, we add it into $T$. We update $\psi$ to be $\psi\land(\neg(\bigwedge A))$ in order to avoid duplicate model of $xnf(s)^p$. The algorithm terminates when $to\_process$ is empty, which means that all states and their transitions and successors are solved.
 
 After constructing the TNFA, we introduce the conversion from \TNFA to \NFA in Algorithm~\ref{algo:TNFA2NFA}.
