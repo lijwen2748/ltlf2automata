@@ -1,7 +1,7 @@
 \documentclass[twoside]{article}
 
-\usepackage{amsfonts,amssymb,amsbsy,textcomp,marvosym,amsmath,caption,threeparttable,amsthm,subfigure}
-\usepackage{eurosym,mathrsfs,fancyhdr,CJK,multicol,graphics,indentfirst,color,bm,upgreek,booktabs,graphicx}
+\usepackage{amsfonts,amssymb,amsbsy,textcomp,picins,marvosym,amsmath,caption,threeparttable,amsthm,subfigure}
+\usepackage{eurosym,mathrsfs,fancyhdr,CJK,multicol,graphics,indentfirst,color,bm,upgreek,booktabs}
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{amsthm}
 \usepackage{setspace}
@@ -9,6 +9,7 @@
 \usepackage[linesnumbered,boxed,ruled,commentsnumbered,vlined]{algorithm2e}
 \usepackage{mathtools}
 \usepackage{graphicx}
+\usepackage{epstopdf}
 \usepackage{xspace}
 \usepackage{url}
 \looseness=-1
@@ -93,36 +94,40 @@
 
 \pagestyle{fancy}
 \fancyhf{}% Çå¿ÕÒ³Ã¼Ò³½Å
-\fancyhead[LO]{\small\sl Shortened Title Within 45 Characters}%
+\fancyhead[LO]{\small\sl Ying-Ying Shi {\it et al.}: SAT-Based Automata Construction for \ltlf}
 \fancyhead[RO]{\small\thepage}
 \fancyhead[LE]{\small\thepage}
 \fancyhead[RE]{\small\sl J. Comput. Sci. \& Technol.}
 \setcounter{page}{1}
 \begin{document}
+\begin{CJK*}{GBK}{song}
 \thispagestyle{empty}
 \vspace*{-13mm}
-\noindent {\small Yingying Shi, Shengping Xiao, Jianwen Li, Jian Guo and Geguang Pu. SAT-Based Automata Construction for LTL over Finite Traces. JOURNAL OF COMPUTER SCIENCE AND TECHNOLOGY}
+\noindent {\small Shi YY, Xiao SP, Li JW et al. SAT-based automata construction for LTL over finite traces. JOURNAL OF COMPUTER SCIENCE AND TECHNOLOGY}
+
 %===========================================================
 \vspace*{2mm}
 
 \title{SAT-Based Automata Construction for LTL over Finite Traces} 
 
-\author{Yingying Shi, Shengping Xiao, Jianwen Li, Jian Guo and Geguang Pu}
+\author{Ying-Ying Shi$^{1}$, Sheng-Ping Xiao$^{1}$, Jian-Wen Li$^{1}$, Jian Guo$^{1}$ and Ge--Guang Pu$^{1}$}
 
-\noindent\textit{Email: \{51184501042,10175101164\}@stu.ecnu.edu.cn, lijwen2748@gmail.com, \{jguo,ggpu\}@sei.ecnu.edu.cn} 
+\address{1}{Software Engineering Institute, East China Normal University, Shanghai 200062, China}
 
-\noindent\textit{Software Engineering Institute, East China Normal University, Shanghai 200062, China  }             \\                           
+\vspace{2mm}
+
+\noindent E-mail: \{51184501042,10175101164\}@stu.ecnu.edu.cn; lijwen2748@gmail.com; \{jguo,ggpu\}@sei.ecnu.edu.cn\\[-1mm]
 
 %\footnotetext{{}\\[-4mm]\indent\quad Regular Paper}
 
-\noindent {\small\bf Abstract} \quad  {\small{In this paper, we consider the automata construction problem for the Linear Temporal Logic over finite traces, i.e., \ltlf. We propose a \SAT-based approach to translate an \ltlf formula to both of its equivalent Nondeterministic and Deterministic Finite Automata (\NFA and \DFA). Notably, the generated automata are transition-based instead of the state-based, which should potentially be a better fit for the applications that can be achieved on the fly, e.g. \ltlf satisfiability checking and synthesis. Unlike extant approaches to translate \ltlf formulas to the equivalent finite automata, which are indirect and has to introduce intermediate procedures, our methodology enables the direct construction from \ltlf formulas to the finite automata.}}
+\noindent {\small\bf Abstract} \quad  {\small{In this paper, we consider the automata construction problem for the Linear Temporal Logic over finite traces, i.e., \ltlf. We propose a \SAT-based approach to translate an \ltlf formula to both of its equivalent Nondeterministic and Deterministic Finite Automata (\NFA and \DFA). Notably, the generated automata are transition-based instead of the state-based, which should potentially be a better fit for the applications that can be achieved on the fly, e.g. \ltlf satisfiability checking and synthesis. Unlike extant approaches to translate \ltlf formulas to the equivalent finite automata, which are indirect and have to introduce intermediate procedures, our methodology enables the direct construction from \ltlf formulas to the finite automata.}}
 
 \vspace*{3mm}
 
 \noindent{\small\bf Keywords} \quad {\small \ltl, \ltlf, \ltlf-to-\NFA, \ltlf-to-\DFA, \SAT, On-the-fly construction}
 
 \vspace*{4mm}
-
+\end{CJK*}
 \baselineskip=18pt plus.2pt minus.2pt
 \parskip=0pt plus.2pt minus0.2pt
 \begin{multicols}{2}
@@ -136,10 +141,11 @@
 \input{algorithm2.tex}
 \input{conclusion.tex}
 
-%\UseRawInputEncoding
+\UseRawInputEncoding
 \bibliographystyle{plain}
 \bibliography{cav.bib,ok.bib}
 
+\input{author intro.tex}
 
 \end{multicols}
 \end{document}

@@ -1,8 +1,8 @@
 \subsection{\ltlf-to-\DFA Construction}
 
-Based on the \NFA construction in the previous section, the equivalent \DFA w.r.t the \ltlf formula may be obtained by applying the Subset Construction \cite{} to the generated \NFA. However, such \DFA construction is not on the fly, as it has to be postponed until the \NFA is fully generated. Inspired from Definition \ref{def:ltlf2nfa}, which enables to construct the \NFA on the fly, we present here an on-the-fly construction directly from the \ltlf formula to the equivalent transition-based \DFA (\TDFA). 
+Based on the \NFA construction in the previous section, the equivalent \DFA w.r.t the \ltlf formula may be obtained by applying the Subset Construction to the generated \NFA. However, such \DFA construction is not on the fly, as it has to be postponed until the \NFA is fully generated. Inspired from Definition \ref{def:ltlf2nfa}, which enables to construct the \TNFA on the fly, we present here an on-the-fly construction directly from the \ltlf formula to the equivalent transition-based \DFA (\TDFA). 
 
-Let $\phi$ be a propositional formula and we denote $\allsat(\phi)$ the set of all satisfying assignments of $\phi$. Given a literal set $L$, we also define the projection of $\allsat(\phi)$ under $L$, i.e., $\allsat(\phi)_{|L}$, is a subset of $\allsat(\phi)$ such that $A\supseteq L$ iff $A\in \allsat(\phi)_{|L}$. Informally speaking, $\allsat(\phi)_{|L}$ represents exactly the set of satisfying assignments of $\phi$ including $L$. Now we are ready to present the \TDFA construction. 
+Let $\phi$ be a propositional formula and we utilize $\allsat(\phi)$ to represent the set of all satisfying assignments of $\phi$. Given a literal set $L$, we also define the projection of $\allsat(\phi)$ under $L$, i.e., $\allsat(\phi)_{|L}$, which is a subset of $\allsat(\phi)$ such that $A\supseteq L$ iff $A\in \allsat(\phi)_{|L}$. Informally speaking, $\allsat(\phi)_{|L}$ represents exactly the set of satisfying assignments of $\phi$ including $L$. Now we are ready to present the \TDFA construction. 
 
 \begin{definition}[Transition-based \DFA]\label{def:ltlf2dfa}
 Given an \ltlf formula $\phi$, the corresponding transition-based \DFA ${\A_{\phi}}^{td}$ is defined as a tuple $(\Sigma, Q, \delta, q_0, T^d)$ such that
@@ -11,37 +11,37 @@ Given an \ltlf formula $\phi$, the corresponding transition-based \DFA ${\A_{\ph
 	\item $Q\subseteq 2^{2^{\cl(\phi)}}$ is the set of states;
 	\item $\delta:  Q \times \Sigma \to Q$ is the transition function, where $q_2 = \delta(q_1, \omega) (\omega \in \Sigma)$ holds iff $q_2=\{X(A) | A\in\allsat(\xnf(q_1)^p)_{|\omega}\}$;
 	\item $q_0 = \{\{\phi \}\}$ is the initial state;
-	\item $T^d\subseteq \delta$ is the set of accepting transitions. A transition $q_1\tran{\omega}q_2$ is in $T^d$ iff there is an $s\in q_1$ such that $\omega\models s$ holds. 
+	\item $T^d\subseteq \delta$ is the set of accepting transitions. A transition $q_1\tran{\omega}q_2$ is in $T^d$ iff there is a $s\in q_1$ such that $\omega\models s$ holds. 
 \end{itemize}
 
 \end{definition}
 
-Analogous to the state representation of the \TNFA, we mix the usage of a state $q$ in the \TDFA such that $q$ represents also the \ltlf formula $\bigvee_{s\in q}\bigwedge_{\psi\in s}\psi$. 
+Analogous to the state representation of the \TNFA, we mix the usage of a state $q$ in the \TDFA such that $q$ also represents the \ltlf formula $\bigvee_{s\in q}\bigwedge_{\psi\in s}\psi$. 
 
-A run $r$ of the transition-based \DFA ${\A_{\phi}}^{td}$ on $\eta$ is a finite state sequence $q_0 q_1\ldots$ such that $q_0$ is the initial state and $q_{i+1} = \delta(q_i,\omega_i)$ for $0\leq i < |\eta|$. Since ${\A_{\phi}}^{td}$ is deterministic, the run $r$ on $\eta$ is unique. $\eta$ is accepted by ${\A_{\phi}}^{td}$ iff the only run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$ ends with some accepting transition in $T^d$. The following theorem guarantees the correctness of the \TDFA construction shown in Definition \ref{def:ltlf2dfa}. 
+A run $r$ of the transition-based \DFA ${\A_{\phi}}^{td}$ on $\eta$ is a finite state sequence $q_0 q_1\ldots$ such that $q_0$ is the initial state and $q_{i+1} = \delta(q_i,\omega_i)$ for $0\leq i < |\eta|$. Since ${\A_{\phi}}^{td}$ is deterministic, the run $r$ on $\eta$ is unique. $\eta$ is accepted by ${\A_{\phi}}^{td}$ iff the only run $r$ of ${\A_{\phi}}^{tn}$ on $\eta$ ends with some accepting transitions in $T^d$. The following theorem guarantees the correctness of the \TDFA construction shown in Definition \ref{def:ltlf2dfa}. 
 
 \begin{theorem}
 Given an \ltlf formula $\phi$ and the \TDFA ${\A_{\phi}}^{td}$ constructed by Definition \ref{def:ltlf2dfa}, a finite trace $\eta\models\phi$ holds iff $\eta$ is accepted by ${\A_{\phi}}^{td}$. 
 \end{theorem}
 \begin{proof}
-Assume ${\A_{\phi}}^{tn}$ is the \TNFA constructed by Definition \ref{def:ltlf2nfa} w.r.t $\phi$. Intuitively, ${\A_{\phi}}^{td}$ from Definition \ref{def:ltlf2dfa} is equivalent to the \TDFA constructed from ${\A_{\phi}}^{tn}$ by applying the Subset Construction to. However, the Subset Construction is not standardized for transition-based finite automata such that the above intuition is not straightforward. Instead, we follow the proof of Theorem \ref{thm:ltlf2nfa} and prove this theorem analogously as follows.
+Assume ${\A_{\phi}}^{tn}$ is the \TNFA constructed by Definition \ref{def:ltlf2nfa} w.r.t $\phi$. Intuitively, ${\A_{\phi}}^{td}$ from Definition \ref{def:ltlf2dfa} is equivalent to the \TDFA constructed by applying the Subset Construction to ${\A_{\phi}}^{tn}$. However, the Subset Construction is not standardized for transition-based finite automata such that the above intuition is not straightforward. Instead, we follow the proof of Theorem \ref{thm:ltlf2nfa} and prove this theorem analogously as follows.
 
 Assume $\eta = \omega_0\omega_1\ldots\omega_n$ ($n\geq 0$). 
 
 ($\Leftarrow$) 
-According to Definition \ref{def:ltlf2dfa},  $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $q_{k-1}\tran{\omega_{k-1}}q_k \in \delta$ and $\omega_n\models s$ for some $s\in q_n$.
+According to Definition \ref{def:ltlf2dfa},  $\eta$ accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $q_{n}\tran{\omega_{n}}q_{n+1} \in \delta$ and $\omega_n\models s$ for some $s\in q_n$.
 To prove $\eta\models\phi\Leftarrow\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}$, we only need to prove $\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}\Rightarrow\ for\ i=0...n,\eta_{n-i}\models q_{n-i}$. Then we could have $\eta (=\eta_0)\models \phi (=q_0)$ when $i=n$.
 
 We prove by induction over the values of $i$.
 \begin{itemize}
-	\item By the Definition \ref{def:ltlf2dfa}, we have that $\omega_n\models s$ for some $s\in q_n$. Since $q_n = \bigvee_{s\in q_n}\bigwedge_{\psi\in s}\psi$, it is true that $s\implies q_n$ for every $s\in q_n$. So $\omega_n\models s$ implies $\omega_n\models q_n$, which means basically when $i = 0$, it holds that $\eta_{n-0}\models q_{n-0}$;
-	\item Inductively, assume $\eta_{n-i}\models q_{n-i}$ holds by satisfying $\eta_{n-i}\models s$ for some $s\in q_{n-i}$ ($0<i\leq n$). Because $q_{n-i-1}\tran{\omega_{n-i-1}}q_{n-i}$ is a transition in the \TDFA and $\eta_{n-i}\models q_{n-i}$ holds, the set $A_{n-i-1} = \omega_{n-i-1}\cup \{\X\theta | \theta\in s\}$ is a satisfying assignment of $\xnf(q_{n-i-1})^p$ in $\allsat(\xnf(q_{n-i-1})^p)_{|\omega_{n-i-1}}$, from Definition \ref{def:ltlf2dfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{n-i-1}=\omega_{n-i-1}\cdot\eta_n-i$ is true, we have that $\eta_{n-i-1}\models q_{n-i-1}$.
+	\item By Definition \ref{def:ltlf2dfa}, we have that $\omega_n\models s$ for some $s\in q_n$. Since $q_n = \bigvee_{s\in q_n}\bigwedge_{\psi\in s}\psi$, it is true that $s\implies q_n$ for every $s\in q_n$. So $\omega_n\models s$ implies $\omega_n\models q_n$, which means basically when $i = 0$, it holds that $\eta_{n-0}\models q_{n-0}$;
+	\item Inductively, assume $\eta_{n-i}\models q_{n-i}$ holds by satisfying $\eta_{n-i}\models s$ for some $s\in q_{n-i}$ ($0<i\leq n$). Because $q_{n-i-1}\tran{\omega_{n-i-1}}q_{n-i}$ is a transition in the \TDFA and $\eta_{n-i}\models q_{n-i}$ holds, the set $A_{n-i-1} = \omega_{n-i-1}\cup \{\X\theta | \theta\in s\}$ is a satisfying assignment of $\xnf(q_{n-i-1})^p$ in $\allsat(\xnf(q_{n-i-1})^p)_{|\omega_{n-i-1}}$, from Definition \ref{def:ltlf2dfa}. Then based on Lemma \ref{lem:propSat} and since $\eta_{n-i-1}=\omega_{n-i-1}\cdot\eta_{n-i}$ is true, we have that $\eta_{n-i-1}\models q_{n-i-1}$.
 \end{itemize}
 
-($\Rightarrow$) We first prove that $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$. 
+($\Rightarrow$) We first prove that $\eta\models\phi$ implies that there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$. 
 If $n = 0$, Corollary \ref{coro:propSat} shows that there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\eta[0]\models L(A)$. From Definition \ref{def:ltlf2dfa}, $\phi\tran{\eta[0]}q$, where $q=\{X(A') | A'\in\allsat(\xnf(\phi)^p)_{|L(A)}\}$, is a transition of the \TDFA. As a result, there is a run $r=q_0(=\phi)q$ of ${\A_{\phi}}^{td}$ on $\eta$.
  
-If $n>0$, according to Lemma \ref{lem:propSat}, $\eta\models\phi$ implies there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\omega_0\models L(A)$ and $\eta_1\models X(A)$. From Definition \ref{def:ltlf2dfa}, $\phi (=q_0)\tran{\omega_0}q_1$, where $q_1=\{X(A') | A'\in\allsat(\xnf(\phi)^p)_{|\omega_0}\}$, is a transition in the \TDFA. Recursively applying the above process to $\eta_i\models q_i(i\geq 1)$, one can prove there is a transition $q_i\tran{\omega_i}q_{i+1}$ in the \TDFA. As a result, we have $\eta\models\phi$ implies there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$.  
+If $n>0$, according to Lemma \ref{lem:propSat}, $\eta\models\phi$ implies there is a satisfying assignment $A$ of $\xnf(\phi)^p$ such that $\omega_0\models L(A)$ and $\eta_1\models X(A)$. From Definition \ref{def:ltlf2dfa}, $\phi (=q_0)\tran{\omega_0}q_1$, where $q_1=\{X(A') | A'\in\allsat(\xnf(\phi)^p)_{|\omega_0}\}$, is a transition in the \TDFA. Recursively applying the above process to $\eta_i\models q_i(i\geq 1)$, one can prove there is a transition $q_i\tran{\omega_i}q_{i+1}$ in the \TDFA. As a result, we have $\eta\models\phi$, which implies there is a run $r$ of ${\A_{\phi}}^{td}$ on $\eta$.  
 
 Now we have that $\eta\models\phi$ implies there is a run $r=q_0...q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ and $\eta_i\models q_i\ for\ i=0...n$. When $i=n$, $\eta_n\models q_n$ i.e., $\omega_n\models q_n$ holds. According to Definition \ref{def:ltlf2dfa}, the transition $q_n\tran{\omega_n}q_{n+1}$ is an accepting transition. As a result, $r$ is an accepting run and $\eta$ is accepted by ${\A_{\phi}}^{td}$.
 \end{proof}
@@ -55,5 +55,5 @@ For an \ltlf formula $\phi$, the size of the corresponding $\TDFA$ ${\A_{\phi}}^
 	The proof is straightforward as every state in ${\A_{\phi}}^{td}$ is from $2^{2^{cl(\phi)}}$, according to Definition \ref{def:ltlf2dfa}.
 \end{proof}
 
-It should be noted that, the conversion from a \TNFA to its equivalent \NFA shown in Theorem \ref{thm:tnfa2nfa} is not applicable to that from a \TDFA to its equivalent \DFA. In fact, the resulting automaton can only be an \NFA. One still has to apply the Subset Construction to the \NFA for the equivalent \DFA. However, we argue that for real application purposes, such as \ltlf synthesis that requires \DFA, working on \TDFA has the same, or even better performance. Currently, this is out of the paper's scope.  
+It should be noted that, the conversion from a \TNFA to its equivalent \NFA shown in Theorem \ref{thm:tnfa2nfa} is not applicable to that from a \TDFA to its equivalent \DFA. In fact, the resulting automaton can only be an \NFA. One still has to apply the Subset Construction to the \NFA for the equivalent \DFA. However, we argue that for real application purposes, such as \ltlf synthesis that requires \DFA, working on \TDFA has the same or even better performance. Currently, this is out of the paper's scope.  
 

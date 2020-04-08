@@ -31,7 +31,7 @@ We use $\cl(\phi)$ to denote the set of subformulas of $\phi$~\cite{Wol81}, whos
 	\item $s_0\in S$ is the initial state;
 	\item $\Omega$ is the accepting conditions. We call $\A$ is a state-based (resp. transition-based) automaton if $\Omega\subseteq S$ (resp. $\Omega\subseteq \rho$) is the set of accepting states (resp. accepting transitions).
 \end{itemize}
-Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A run $r$ of $\A$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. We say $\eta$ is accepted by $\A$ iff there is a run $r$ of $\A$ on $\eta$ such that $r$ ends with some accepting condition in $\Omega$. $\A$ is called deterministic iff $|\rho(s,\omega)| \leq 1$ for every $s\in S$ and $\omega\in\Sigma$; otherwise, $\A$ is nondeterministic. 
+Let $\eta=\omega_0\omega_1\ldots\in\Sigma^+$ be a finite trace over $\Sigma$. A run $r$ of $\A$ on $\eta$ is a finite state sequence $s_0 s_1\ldots$ such that $s_0$ is the initial state and $s_{i+1}\in\rho(s_i,\omega_i)$ for $0\leq i < |\eta|$. We say $\eta$ is accepted by $\A$ iff there is a run $r$ of $\A$ on $\eta$ such that $r$ ends with some accepting conditions in $\Omega$. $\A$ is called deterministic iff $|\rho(s,\omega)| \leq 1$ for every $s\in S$ and $\omega\in\Sigma$; otherwise, $\A$ is nondeterministic. 
 
 We consider two different finite automata, i.e., the state-based and transition-based, which vary according to the accepting conditions. In the rest of the paper, a finite automaton is state-based if it is not stated explicitly.  
 
