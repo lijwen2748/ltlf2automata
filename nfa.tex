@@ -1,9 +1,9 @@
 \section{SAT-Based Automata Construction}\label{sec:main}
 
-In this section, we present the construction from an \ltlf formula to the equivalent \NFA and \DFA respectively. 
+In this section, we present the construction from an \ltlf formula to the equivalent (T)\NFA and (T)\DFA respectively. 
 
 
-\subsection{\ltlf-to-\NFA Construction}
+\subsection{\ltlf-to-(T)\NFA Construction}
 
 To leverage \SAT solvers for the automata construction, we first need to consider \ltlf formulas as propositional formulas. The motivation comes from treating all temporal subformulas of $\phi$ as atomic propositions. 
 
@@ -29,7 +29,7 @@ For an \ltlf formula $\phi$, we define its Next Normal Form, i.e., $\xnf(\phi)$,
 \begin{itemize}
 \item $\xnf(\tt) = \tt$ and $\xnf(\ff) = \ff$;
 \item If $\phi$ is a literal, $\xnf(\phi) = \phi \wedge \X(\tt)$;
-\item If $\phi = \X(\psi)$ or $\phi = \N(\psi)$, $\xnf(\phi) = \tt \wedge \X(\psi)$;
+\item If $\phi = \X(\psi)$ or $\phi = \N(\psi)$, $\xnf(\phi) = \X(\psi)$;
 \item If $\phi = (\phi_1 \wedge \phi_2)$, $\xnf(\phi) = \xnf(\phi_1)\wedge\xnf(\phi_2)$;
 \item If $\phi = (\phi_1 \vee \phi_2), \xnf(\phi) = \xnf(\phi_1)\vee \xnf(\phi_2)$; 
 \item If $\phi = (\phi_1 \U \phi_2), \xnf(\phi) = \xnf(\phi_2) \vee (\xnf(\phi_1) \wedge \X(\phi))$; 

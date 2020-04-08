@@ -1,4 +1,4 @@
-\subsection{\ltlf-to-\DFA Construction}
+\subsection{\ltlf-to-(T)\DFA Construction}
 
 Based on the \NFA construction in the previous section, the equivalent \DFA w.r.t the \ltlf formula may be obtained by applying the Subset Construction to the generated \NFA. However, such \DFA construction is not on the fly, as it has to be postponed until the \NFA is fully generated. Inspired from Definition \ref{def:ltlf2nfa}, which enables to construct the \TNFA on the fly, we present here an on-the-fly construction directly from the \ltlf formula to the equivalent transition-based \DFA (\TDFA). 
 
@@ -30,7 +30,7 @@ Assume $\eta = \omega_0\omega_1\ldots\omega_n$ ($n\geq 0$).
 
 ($\Leftarrow$) 
 According to Definition \ref{def:ltlf2dfa},  $\eta$ accepted by ${\A_{\phi}}^{td}$ implies that there is a run $r=q_0q_1\ldots q_n q_{n+1}$ of ${\A_{\phi}}^{td}$ on $\eta$ such that $q_{n}\tran{\omega_{n}}q_{n+1} \in \delta$ and $\omega_n\models s$ for some $s\in q_n$.
-To prove $\eta\models\phi\Leftarrow\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}$, we only need to prove $\eta\ is\ accepted\ by\  {\A_{\phi}}^{td}\Rightarrow\ for\ i=0...n,\eta_{n-i}\models q_{n-i}$. Then we could have $\eta (=\eta_0)\models \phi (=q_0)$ when $i=n$.
+To prove $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies $\eta\models\phi$ holds, we only need to prove $\eta$ is accepted by ${\A_{\phi}}^{td}$ implies $\eta_{n-i}\models q_{n-i}$ for\ i=0...n. Then we could have $\eta (=\eta_0)\models \phi (=q_0)$ when $i=n$.
 
 We prove by induction over the values of $i$.
 \begin{itemize}
@@ -55,5 +55,5 @@ For an \ltlf formula $\phi$, the size of the corresponding $\TDFA$ ${\A_{\phi}}^
 	The proof is straightforward as every state in ${\A_{\phi}}^{td}$ is from $2^{2^{cl(\phi)}}$, according to Definition \ref{def:ltlf2dfa}.
 \end{proof}
 
-It should be noted that, the conversion from a \TNFA to its equivalent \NFA shown in Theorem \ref{thm:tnfa2nfa} is not applicable to that from a \TDFA to its equivalent \DFA. In fact, the resulting automaton can only be an \NFA. One still has to apply the Subset Construction to the \NFA for the equivalent \DFA. However, we argue that for real application purposes, such as \ltlf synthesis that requires \DFA, working on \TDFA has the same or even better performance. Currently, this is out of the paper's scope.  
+It should be noted that, the conversion from a \TNFA to its equivalent \NFA shown in Theorem \ref{thm:tnfa2nfa} is not applicable to that from a \TDFA to its equivalent \DFA. In fact, the resulting automaton can only be an \NFA. One still has to apply the Subset Construction to the \NFA for the equivalent \DFA. However, we argue that for real application purposes, such as \ltlf synthesis that requires \DFA, working on \TDFA has the same or even better performance. Currently, this is out of this paper's scope.  
 
